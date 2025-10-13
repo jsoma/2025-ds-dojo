@@ -1209,20 +1209,31 @@ def create_codespaces_branch(config, commit=False):
                           capture_output=True, text=True)
     current_branch = result.stdout.strip()
 
-    # Check if notebooks branch exists
+    # Check if notebooks branch exists locally
     result = subprocess.run(['git', 'branch', '--list', notebooks_branch],
                           capture_output=True, text=True)
-    branch_exists = bool(result.stdout.strip())
+    branch_exists_locally = bool(result.stdout.strip())
+
+    # Check if notebooks branch exists on remote
+    result = subprocess.run(['git', 'ls-remote', '--heads', 'origin', notebooks_branch],
+                          capture_output=True, text=True)
+    branch_exists_remote = bool(result.stdout.strip())
 
     commands = []
 
-    if branch_exists:
-        # Update existing branch
-        commands.append(f"git checkout {notebooks_branch}")
-        commands.append(f"git merge {current_branch} --no-edit")
-    else:
-        # Create new branch
-        commands.append(f"git checkout -b {notebooks_branch}")
+    # Delete local branch if it exists (we'll recreate it clean)
+    if branch_exists_locally:
+        commands.append(f"git branch -D {notebooks_branch}")
+
+    # Delete remote branch if it exists
+    if branch_exists_remote and commit:
+        commands.append(f"git push origin --delete {notebooks_branch}")
+
+    # Create new orphan branch (no history, no files from main)
+    commands.append(f"git checkout --orphan {notebooks_branch}")
+
+    # Remove all files from the index (orphan branch starts with everything staged)
+    commands.append("git rm -rf . 2>/dev/null || true")
 
     # Files to include in codespaces branch
     files_to_add = []
@@ -1283,12 +1294,35 @@ def create_codespaces_branch(config, commit=False):
             files_to_add.append(readme)
 
     if files_to_add:
+        # Get unique directories that need to be created
+        directories = set()
+        for file in files_to_add:
+            if file != '.devcontainer/':  # Skip, handled separately
+                file_path = Path(file)
+                if file_path.parent != Path('.'):
+                    directories.add(str(file_path.parent))
+
+        # Create all necessary directories
+        if directories:
+            commands.append(f"mkdir -p {' '.join(sorted(directories))}")
+
+        # Copy files from main branch to the orphan branch
+        for file in files_to_add:
+            if file == '.devcontainer/':
+                # Skip this, handled by devcontainer_commands
+                continue
+            # Copy the file from main branch
+            if ' ' in file:
+                commands.append(f'git show {current_branch}:"{file}" > "{file}"')
+            else:
+                commands.append(f"git show {current_branch}:{file} > {file}")
+
         # Add the devcontainer copy command if needed
         commands.extend(devcontainer_commands)
-        # Create git add command - quote files with spaces
-        quoted_files = [f'"{f}"' if ' ' in f else f for f in files_to_add]
-        commands.append(f"git add {' '.join(quoted_files)}")
-        commands.append(f'git commit -m "Update {notebooks_branch} branch with notebooks and data files"')
+
+        # Add all files to git
+        commands.append("git add .")
+        commands.append(f'git commit -m "Create {notebooks_branch} branch with notebooks and data files"')
         commands.append(f"git push -u origin {notebooks_branch}")
 
     # Switch back to original branch
