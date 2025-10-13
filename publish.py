@@ -820,6 +820,10 @@ def prepare_codespaces_build(config) -> Path | None:
     # Copy section folders
     copied_any = False
     for section in config.get('sections', []) or []:
+        # Skip draft sections
+        if isinstance(section, dict) and section.get('draft', False):
+            print(f"  → Skipping draft section in Codespaces build: {section.get('title', section.get('folder'))}")
+            continue
         folder = section.get('folder') if isinstance(section, dict) else section
         if not folder:
             continue
