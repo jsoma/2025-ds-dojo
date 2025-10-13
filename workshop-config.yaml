@@ -48,7 +48,7 @@ sections:
     data_files:
       - 01-python-basics/学内違反データ.csv
       - 01-python-basics/学内違反データ.pdf
-      - 01-python-basics/cheating.pdf
+      - 01-python-basics/cheating.csv
       - 01-python-basics/cheating.pdf
 
   # Day 2 - Tuesday Morning

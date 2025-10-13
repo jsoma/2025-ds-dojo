@@ -2,3 +2,6 @@
 .DS_Store
 _review
 ~*
+__pycache__
+build-codespaces
+.ipynb_checkpoints

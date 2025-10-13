@@ -330,12 +330,14 @@ def create_setup_cells(zip_name, config, install_packages="pandas natural_pdf tq
 
     return cells
 
-def process_notebook(notebook_path, output_dir, config):
+def process_notebook(notebook_path, output_dir, config, section_cfg=None):
     """Process a single notebook and return info for index."""
     with open(notebook_path, 'r') as f:
         notebook = json.load(f)
 
     metadata = get_notebook_metadata(notebook)
+    # (No inheritance of section data_files here - section-level zips are created
+    # separately in main() and shown on the index page.)
     if not metadata:
         print(f"Skipping {notebook_path} - no workshop metadata")
         return None
@@ -799,7 +801,7 @@ function loadSlides(id, src) {{
     
     return html
 
-def process_markdown(markdown_path, output_dir, config):
+def process_markdown(markdown_path, output_dir, config, section_cfg=None):
     """Process a markdown file with frontmatter and return info for index."""
     with open(markdown_path, 'r') as f:
         content = f.read()
@@ -820,7 +822,7 @@ def process_markdown(markdown_path, output_dir, config):
     # Copy referenced files (images, videos, etc) from markdown content
     copy_markdown_referenced_files(markdown_content, markdown_dir, output_subdir)
     
-    # Create data zip if data files are specified
+    # Create data zip only if the markdown itself declares data_files
     if frontmatter.get('data_files'):
         zip_name = f"{base_name}-data.zip"
         create_data_zip(frontmatter['data_files'], output_subdir / zip_name, markdown_dir)
@@ -964,6 +966,13 @@ def create_index(notebooks, config, output_dir):
             section_folder = section_dir.name if section_items else None
             slide_html = generate_slide_embed(section_cfg['slides'], section_dir.parent, Path(config.get('output_dir', 'docs')), 'index', section_folder=section_folder)
             notebooks_md.append('\n' + slide_html + '\n')
+
+        # If the section declares data_files, add a download box linking to the section zip
+        if section_cfg.get('data_files'):
+            sec_folder = section_items[0]['section_folder'] if section_items else section_cfg.get('folder')
+            if sec_folder:
+                zip_name = f"{Path(sec_folder).name}-data.zip"
+                notebooks_md.append(f"\n<div class=\"download-box\">\n<strong>Section files:</strong> <a href=\"./{sec_folder}/{zip_name}\">📦 {zip_name}</a>\n</div>\n\n")
 
         # Sort items: first by those with order (ascending), then by filename (descending)
         def sort_key(item):
@@ -1203,108 +1212,144 @@ def setup_git_lfs(output_dir, size_threshold_mb=80):
     else:
         print("  → All large files already tracked by Git LFS")
 
-def create_codespaces_branch(config, commit=False):
-    """Create or update a codespaces branch with notebooks and data files."""
+def create_codespaces_branch(config, commit=False, keep_temp=False):
+    """Create or update a codespaces branch with notebooks and data files.
+
+    Uses a temporary repository or a git worktree so the current working tree is not modified.
+    Returns True on success, False on failure.
+    """
     import shutil
     import tempfile
+    import subprocess
+    from pathlib import Path
 
     notebooks_branch = config.get('notebooks_branch', 'codespaces')
 
-    # Verify we are inside a git repo and have a remote
+    # Verify git repo and remote
     try:
         subprocess.run(['git', 'rev-parse', '--git-dir'], capture_output=True, text=True, check=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         print("⚠ Not in a git repository. Skipping codespaces branch creation.")
         return True
 
-    # Get remote URL
     try:
-        remote_url_proc = subprocess.run(['git', 'config', '--get', 'remote.origin.url'], capture_output=True, text=True, check=True)
-        remote_url = remote_url_proc.stdout.strip()
-        if not remote_url:
-            print("  ⚠ No remote 'origin' found. Set a remote and try again.")
-            return False
+        remote_proc = subprocess.run(['git', 'config', '--get', 'remote.origin.url'], capture_output=True, text=True, check=True)
+        remote_url = remote_proc.stdout.strip()
     except subprocess.CalledProcessError:
         print("  ⚠ Could not determine remote URL. Skipping codespaces branch creation.")
         return False
 
-    print(f"\n{'='*60}")
-    print(f"Setting up Codespaces branch (temp clone): {notebooks_branch}")
-    print(f"{'='*60}")
+    if not remote_url:
+        print("  ⚠ No remote 'origin' found. Set a remote and try again.")
+        return False
 
-    # Create a build directory for codespaces content (already created by main)
     build_dir = Path('build-codespaces')
     if not build_dir.exists():
         print("  ⚠ Build directory not found - nothing to publish.")
         return False
 
-    # Create a temporary repo and push from there to avoid touching the current working tree
+    tmp_ctx = None
     try:
-        with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
-            print(f"  → Creating temporary repo at: {tmp}")
+        # create temporary location
+        if keep_temp:
+            tmp_path = Path(tempfile.mkdtemp(prefix='publish-codespaces-'))
+        else:
+            tmp_ctx = tempfile.TemporaryDirectory()
+            tmp_path = Path(tmp_ctx.name)
 
-            # init repo
-            subprocess.run(['git', 'init'], cwd=str(tmp), check=True, capture_output=True, text=True)
+        # init temp repo
+        subprocess.run(['git', 'init'], cwd=str(tmp_path), check=True, capture_output=True, text=True)
+        subprocess.run(['git', 'lfs', 'install'], cwd=str(tmp_path), capture_output=True, text=True)
+        subprocess.run(['git', 'remote', 'add', 'origin', remote_url], cwd=str(tmp_path), check=True, capture_output=True, text=True)
+        subprocess.run(['git', 'checkout', '--orphan', notebooks_branch], cwd=str(tmp_path), check=True, capture_output=True, text=True)
 
-            # Ensure git lfs is available in the temp repo (if installed)
-            subprocess.run(['git', 'lfs', 'install'], cwd=str(tmp), capture_output=True, text=True)
-
-            # Add origin remote
-            subprocess.run(['git', 'remote', 'add', 'origin', remote_url], cwd=str(tmp), check=True, capture_output=True, text=True)
-
-            # Create orphan branch
-            subprocess.run(['git', 'checkout', '--orphan', notebooks_branch], cwd=str(tmp), check=True, capture_output=True, text=True)
-
-            # Copy build artifacts into temp repo
-            for item in build_dir.iterdir():
-                dest = tmp / item.name
-                if item.is_dir():
-                    shutil.copytree(item, dest)
-                else:
-                    shutil.copy2(item, dest)
-
-            # If there's a .gitattributes in the source repo, copy it so LFS patterns are preserved
-            gitattributes = Path('.gitattributes')
-            if gitattributes.exists():
-                shutil.copy2(gitattributes, tmp / '.gitattributes')
-
-            # In temp repo: ensure LFS is active and track patterns from .gitattributes (no-op if none)
-            subprocess.run(['git', 'lfs', 'install'], cwd=str(tmp), capture_output=True, text=True)
-
-            # Add everything and commit
-            subprocess.run(['git', 'add', '.'], cwd=str(tmp), check=True, capture_output=True, text=True)
-            commit_msg = f"Update {notebooks_branch} branch with notebooks and data"
-            # Commit may fail if there is nothing to commit
-            try:
-                subprocess.run(['git', 'commit', '-m', commit_msg], cwd=str(tmp), check=True, capture_output=True, text=True)
-            except subprocess.CalledProcessError as e:
-                # If nothing to commit, still proceed to push (force update)
-                if 'nothing to commit' in (e.stderr or '') or 'nothing to commit' in (e.stdout or ''):
-                    print("  → Nothing to commit in temp repo (maybe no changes). Proceeding to push.")
-                else:
-                    print(f"  ✗ git commit failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
-                    return False
-
-            if commit:
-                print("\n  → Pushing temporary branch to remote...")
-                try:
-                    subprocess.run(['git', 'push', '-f', 'origin', notebooks_branch], cwd=str(tmp), check=True, capture_output=True, text=True)
-                except subprocess.CalledProcessError as e:
-                    print(f"  ✗ git push failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
-                    return False
+        # copy build artifacts
+        for item in build_dir.iterdir():
+            dest = tmp_path / item.name
+            if item.is_dir():
+                shutil.copytree(item, dest)
             else:
-                print("\n  → Dry run: temporary repo created. To push, run with --commit or run these commands in the temp directory:")
-                print(f"    cd {tmp}")
-                print(f"    git push -f origin {notebooks_branch}")
+                shutil.copy2(item, dest)
 
-            print(f"\n✓ Successfully prepared {notebooks_branch} from temporary repo")
-            print(f"✓ Codespaces URL: https://codespaces.new/{config.get('github_repo', 'USER/REPO')}?ref={notebooks_branch}")
-            return True
+        # auto-generate .gitattributes for large files in build_dir
+        try:
+            threshold_mb = int(config.get('git_lfs_threshold_mb', 80))
+        except Exception:
+            threshold_mb = 80
+        threshold_bytes = threshold_mb * 1024 * 1024
+        gitattributes_lines = []
+        for f in build_dir.rglob('*'):
+            if f.is_file():
+                try:
+                    if f.stat().st_size > threshold_bytes:
+                        rel = f.relative_to(build_dir).as_posix()
+                        gitattributes_lines.append(f"{rel} filter=lfs diff=lfs merge=lfs -text\n")
+                except Exception:
+                    pass
+
+        # include existing top-level .gitattributes
+        top_gitattributes = Path('.gitattributes')
+        if top_gitattributes.exists():
+            try:
+                with open(top_gitattributes, 'r') as gf:
+                    existing = gf.read()
+                for line in existing.splitlines(keepends=True):
+                    if line and line not in gitattributes_lines:
+                        gitattributes_lines.append(line)
+            except Exception:
+                pass
+
+        if gitattributes_lines:
+            try:
+                with open(tmp_path / '.gitattributes', 'w') as outf:
+                    outf.writelines(gitattributes_lines)
+                print(f"  → Wrote .gitattributes with {len(gitattributes_lines)} entries")
+            except Exception as e:
+                print(f"  ⚠ Failed to write .gitattributes: {e}")
+
+        # ensure LFS is available
+        subprocess.run(['git', 'lfs', 'install'], cwd=str(tmp_path), capture_output=True, text=True)
+
+        # add & commit
+        subprocess.run(['git', 'add', '.'], cwd=str(tmp_path), check=True, capture_output=True, text=True)
+        commit_msg = f"Update {notebooks_branch} branch with notebooks and data"
+        try:
+            subprocess.run(['git', 'commit', '-m', commit_msg], cwd=str(tmp_path), check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as e:
+            if 'nothing to commit' in (e.stderr or '') or 'nothing to commit' in (e.stdout or ''):
+                print("  → Nothing to commit in temp repo (maybe no changes). Proceeding to push.")
+            else:
+                print(f"  ✗ git commit failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+                return False
+
+        if commit:
+            print("\n  → Pushing temporary branch to remote...")
+            try:
+                subprocess.run(['git', 'push', '-f', 'origin', notebooks_branch], cwd=str(tmp_path), check=True, capture_output=True, text=True)
+            except subprocess.CalledProcessError as e:
+                print(f"  ✗ git push failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+                return False
+        else:
+            print("\n  → Dry run: temporary repo/worktree created. To push, run with --commit or run these commands in the temp directory:")
+            print(f"    cd {tmp_path}")
+            print(f"    git push -f origin {notebooks_branch}")
+
+        print(f"\n✓ Successfully prepared {notebooks_branch} from temporary location")
+        print(f"✓ Codespaces URL: https://codespaces.new/{config.get('github_repo', 'USER/REPO')}?ref={notebooks_branch}")
+
+        # cleanup: if not keeping temp and tmp_ctx exists, it will be cleaned up in finally
+
+        return True
 
     except Exception as e:
-        print(f"  ✗ Error creating/pushing temporary repo: {e}")
+        print(f"  ✗ Error creating/pushing temporary repo/worktree: {e}")
         return False
+    finally:
+        if tmp_ctx is not None:
+            try:
+                tmp_ctx.cleanup()
+            except Exception:
+                pass
 
 def main():
     """Process all notebooks and create data packages."""
@@ -1312,6 +1357,8 @@ def main():
     parser = argparse.ArgumentParser(description='Process notebooks and create workshop materials')
     parser.add_argument('--commit', action='store_true',
                        help='Automatically commit and push the codespaces branch')
+    parser.add_argument('--keep-temp', action='store_true',
+                       help='Keep the temporary repo for inspection (for debugging)')
     args = parser.parse_args()
 
     config = load_config()
@@ -1366,6 +1413,24 @@ def main():
             print(f"Warning: Section folder '{folder}' not found")
             continue
 
+        # Create section-level data zip if section declares data_files
+        if isinstance(section, dict) and section.get('data_files'):
+            section_zip_name = f"{Path(folder).name}-data.zip"
+            section_output_subdir = output_dir / folder
+            section_output_subdir.mkdir(parents=True, exist_ok=True)
+            # Normalize patterns: if patterns include the section folder prefix, strip it
+            raw_patterns = list(section.get('data_files') or [])
+            normalized = []
+            folder_prefix = f"{Path(folder).name}/"
+            for p in raw_patterns:
+                if isinstance(p, str) and p.startswith(folder_prefix):
+                    normalized.append(p[len(folder_prefix):])
+                else:
+                    normalized.append(p)
+
+            # Patterns in config are relative to the section folder; pass base_dir=Path(folder)
+            create_data_zip(normalized, section_output_subdir / section_zip_name, Path(folder))
+
         # Process notebooks
         for notebook_path in Path(folder).glob('*.ipynb'):
             # Skip checkpoints
@@ -1373,7 +1438,7 @@ def main():
                 continue
 
             print(f"\nProcessing {notebook_path}")
-            notebook_info = process_notebook(notebook_path, output_dir, config)
+            notebook_info = process_notebook(notebook_path, output_dir, config, section_cfg=section)
             if notebook_info:
                 # Override section with configured title
                 notebook_info['section'] = title
@@ -1386,7 +1451,7 @@ def main():
         # Process markdown files
         for markdown_path in Path(folder).glob('*.md'):
             print(f"\nProcessing {markdown_path}")
-            markdown_info = process_markdown(markdown_path, output_dir, config)
+            markdown_info = process_markdown(markdown_path, output_dir, config, section_cfg=section)
             if markdown_info:
                 # Override section with configured title
                 markdown_info['section'] = title
@@ -1408,7 +1473,7 @@ def main():
     setup_git_lfs(output_dir, lfs_threshold)
 
     # Create or update codespaces branch
-    result = create_codespaces_branch(config, commit=args.commit)
+    result = create_codespaces_branch(config, commit=args.commit, keep_temp=args.keep_temp)
     if result is False:
         print("\n❌ Failed to create/update codespaces branch. Exiting with error.")
         sys.exit(1)
