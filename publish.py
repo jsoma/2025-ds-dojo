@@ -776,6 +776,83 @@ def convert_pptx_to_pdf(pptx_path):
     print(f"     Or: brew install --cask libreoffice (Mac/Linux)")
     return None
 
+def prepare_codespaces_build(config) -> Path | None:
+    """Create the build-codespaces directory with notebooks, data, and environment files.
+
+    - Copies each section folder into build-codespaces/<folder> (skips __pycache__ and .ipynb_checkpoints)
+    - Writes requirements.txt from config.codespaces.requirements
+    - Copies _devcontainer-template to .devcontainer if present
+    Returns the Path to the build directory or None if nothing created.
+    """
+    try:
+        from pathlib import Path
+        import shutil
+    except Exception:
+        return None
+
+    build_dir = Path('build-codespaces')
+    # Reset build directory
+    if build_dir.exists():
+        try:
+            shutil.rmtree(build_dir)
+        except Exception:
+            pass
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    # Requirements
+    reqs = (config.get('codespaces') or {}).get('requirements')
+    if isinstance(reqs, list) and reqs:
+        try:
+            (build_dir / 'requirements.txt').write_text("\n".join(reqs) + "\n", encoding='utf-8')
+            print("  → Wrote build-codespaces/requirements.txt")
+        except Exception as e:
+            print(f"  ⚠ Failed to write requirements.txt: {e}")
+
+    # Devcontainer
+    dev_src = Path('_devcontainer-template')
+    if dev_src.exists() and dev_src.is_dir():
+        try:
+            shutil.copytree(dev_src, build_dir / '.devcontainer')
+            print("  → Copied .devcontainer configuration for Codespaces")
+        except Exception as e:
+            print(f"  ⚠ Failed to copy devcontainer: {e}")
+
+    # Copy section folders
+    copied_any = False
+    for section in config.get('sections', []) or []:
+        folder = section.get('folder') if isinstance(section, dict) else section
+        if not folder:
+            continue
+        src = Path(folder)
+        if not src.exists() or not src.is_dir():
+            continue
+        dest = build_dir / src.name
+        try:
+            shutil.copytree(
+                src,
+                dest,
+                ignore=shutil.ignore_patterns('__pycache__', '.ipynb_checkpoints')
+            )
+            copied_any = True
+            print(f"  → Copied section: {folder}")
+        except Exception as e:
+            print(f"  ⚠ Failed to copy section {folder}: {e}")
+
+    # Add a README if missing
+    readme = build_dir / 'README.md'
+    if not readme.exists():
+        try:
+            readme.write_text(
+                "# Codespaces Workspace\n\n"
+                "This branch contains notebooks and data for GitHub Codespaces.\n\n"
+                "- Open in Codespaces using the workshop link.\n"
+                "- Python packages are listed in requirements.txt.\n"
+                , encoding='utf-8')
+        except Exception:
+            pass
+
+    return build_dir if copied_any else build_dir
+
 def generate_slide_embed(slide_file, notebook_dir, output_dir, item_type='notebook', section_folder=None):
     """Generate HTML for slide embedding with lazy loading."""
     # Find the slide file
@@ -1633,6 +1710,9 @@ def main():
         if not main_ok:
             print("\n❌ Failed to commit/push main branch. Exiting with error.")
             sys.exit(1)
+
+    # Prepare build-codespaces content before creating/updating codespaces branch
+    prepare_codespaces_build(config)
 
     # Create or update codespaces branch
     result = create_codespaces_branch(config, commit=args.commit, keep_temp=args.keep_temp)
