@@ -98,7 +98,6 @@ def markdown_to_html(content, title=""):
             padding-top: 2em;
             padding-bottom: 0.5em;
             z-index: 100;
-            border-bottom: 2px solid #eee;
         }}
         h3 a {{
             text-decoration: none;
@@ -1228,7 +1227,10 @@ def create_index(notebooks, config, output_dir):
 .hero .subtitle { margin: 0 auto; max-width: 980px; color: #4a4a4a; font-size: 1.1em; }
 h2 {
     font-size: 2em;
-    padding-top: 3em;
+    padding: 0 2em;
+    background: #d86ecc;
+    color: white;
+    
 }
 </style>
 
