@@ -1214,23 +1214,29 @@ def create_index(notebooks, config, output_dir):
     # Use template from config or default
     template = config.get('index_template', '''
 <style>
-/* Hero section */
-.hero {
-    padding: 56px 24px;
-    margin: 1.5em 0 2em;
-    text-align: center;
-    background: linear-gradient(180deg, #f6f8fa 0%, #ffffff 100%);
-    border: 1px solid #e6e8eb;
-    border-radius: 12px;
+/* Full-bleed hero */
+.hero-bleed { 
+    width: 100vw; 
+    margin-left: calc(50% - 50vw); 
+    margin-right: calc(50% - 50vw);
+    background: linear-gradient(120deg, #eef3ff 0%, #f4f9ff 35%, #f8f3ff 70%, #fff6ea 100%);
+    border-bottom: 1px solid #e6e8eb;
 }
-.hero h1 { margin: 0 0 0.4em; font-size: 2.2em; }
-.hero .subtitle { margin: 0 auto; max-width: 980px; color: #555; font-size: 1.1em; }
+.hero {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 64px 24px 56px;
+    text-align: center;
+}
+.hero h1 { margin: 0 0 0.4em; font-size: 2.4em; }
+.hero .subtitle { margin: 0 auto; max-width: 980px; color: #4a4a4a; font-size: 1.1em; }
 </style>
 
-<div class="hero">
-    <h1>{{ title }}</h1>
-    <p class="subtitle">{{ description }}</p>
-  
+<div class="hero-bleed">
+    <div class="hero">
+        <h1>{{ title }}</h1>
+        <p class="subtitle">{{ description }}</p>
+    </div>
 </div>
 
 {{ codespaces_button }}
@@ -1256,12 +1262,12 @@ def create_index(notebooks, config, output_dir):
         codespaces_button = f'''
 <div class="cs-cta" style="text-align: center; margin: 2em 0; padding: 1.5em; background: #f6f8fa; border-radius: 8px; border: 1px solid #e6e8eb;">
     <style>
-    .cs-cta .row {{ display: grid; grid-template-columns: 260px 1fr; align-items: center; gap: 16px; margin: 12px 0; }}
+    .cs-cta .row {{ display: grid; grid-template-columns: minmax(240px, 280px) 1fr; align-items: start; gap: 20px; margin: 18px 0; grid-auto-rows: auto; }}
     .cs-cta .btn {{ display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; min-width: 240px; }}
     .cs-cta .btn-green {{ background: #238636; color: #fff; }}
     .cs-cta .btn-blue {{ background: #0969da; color: #fff; }}
-    .cs-cta .explain {{ max-width: 720px; color: #666; font-size: 0.95em; text-align: left; }}
-    @media (max-width: 800px) {{ .cs-cta .row {{ grid-template-columns: 1fr; }} .cs-cta .explain {{ text-align: center; }} }}
+    .cs-cta .explain {{ max-width: 720px; color: #666; font-size: 0.95em; text-align: left; line-height: 1.6; overflow-wrap: anywhere; word-break: break-word; margin-top: 2px; }}
+    @media (max-width: 900px) {{ .cs-cta .row {{ grid-template-columns: 1fr; }} .cs-cta .explain {{ text-align: center; }} }}
     </style>
     <h3 style="margin-top: 0;">🚀 Start Coding in the Cloud</h3>
     <p style="margin: 0.5em 0 1em; color: #444; font-size: 0.95em;">
