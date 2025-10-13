@@ -1,0 +1,5 @@
+docs/01-python-basics/data-dojo-intro.pptx filter=lfs diff=lfs merge=lfs -text
+docs/03-dojo-practical-ai.pdf filter=lfs diff=lfs merge=lfs -text
+docs/Text[[:space:]]analysis-data.zip filter=lfs diff=lfs merge=lfs -text
+docs/05-ai/Text[[:space:]]analysis-data.zip filter=lfs diff=lfs merge=lfs -text
+docs/05-ai/03-dojo-practical-ai.pdf filter=lfs diff=lfs merge=lfs -text

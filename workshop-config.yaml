@@ -1,0 +1,149 @@
+# Workshop configuration for データサイエンティストDOJO 2025
+title: "データサイエンティストDOJO 2025"
+description: "6-day intensive Python workshop for covering data analysis, APIs, web scraping, AI, and visualization"
+github_repo: "jsoma/2025-ds-dojo"
+github_branch: "main"
+output_dir: "docs"
+notebooks_branch: "codespaces"  # Branch with notebooks and data for Codespaces
+site_url: "https://jsoma.github.io/2025-ds-dojo"
+year: 2025
+
+author: "Jonathan Soma"
+organization: "Columbia Graduate School of Journalism"
+author_title: "Knight Chair in Data Journalism"
+email: "js4571@columbia.edu"
+twitter: "@dangerscarf"
+github: "https://github.com/jsoma"
+
+platforms: [colab, codespaces]
+
+codespaces:
+  requirements:
+    - pandas>=2.0.0
+    - numpy>=1.24.0
+    - matplotlib>=3.6.0
+    - seaborn>=0.12.0
+    - requests>=2.28.0
+    - beautifulsoup4>=4.11.0
+    - lxml>=4.9.0
+    - playwright>=1.40.0
+    - jupyter
+    - ipywidgets>=8.0.0
+    - tqdm>=4.65.0
+    - openpyxl>=3.1.0
+
+sections:
+  # Day 1 - Monday
+  - folder: 01-python-basics
+    title: "Python Basics"
+    description: "Introduction to Python programming, Jupyter notebooks, and basic data structures"
+    slides: 01-python-basics/data-dojo-intro.pptx  # Will auto-convert to PDF
+    links:
+      - title: "Welcome Survey"
+        url: "https://docs.google.com/forms/d/e/1FAIpQLScPvh9uIHWClCkITyMOGWsb5gWOX0QAAjkLF88p53UDpnIopw/viewform"
+      - title: "Python's Not (Just) For Unicorns"
+        url: "https://littlecolumns.com/learn/python"
+      - title: "Homework 1 Data Sources Survey"
+        url: "https://docs.google.com/forms/d/e/1FAIpQLSeESNZJkuUXLg2W7Uf-FROW1VCZflwMGr3Dib8yPT4rvLWoSw/viewform"
+
+  # Day 2 - Tuesday Morning
+  - folder: 02-pandas
+    title: "Data Analysis with Pandas"
+    description: "Working with structured data using pandas: loading, cleaning, analyzing, and transforming datasets"
+    slides: 02-pandas/structured-data.pdf  # Use existing PDF
+    data_files:
+      - "*.csv"
+      - "*.xlsx"
+
+  # Day 2 - Tuesday Afternoon
+  - folder: 03-apis
+    title: "Working with APIs"
+    description: "Accessing data from web APIs programmatically, handling JSON responses, and paginated results"
+    slides: 03-apis/nikkei-apis.pptx  # 21MB PPTX
+    api_keys_url: "https://bit.ly/nikkei-api-keys-2025"
+    links:
+      - title: "Inspect Element - Undocumented APIs"
+        url: "https://inspectelement.org/"
+      - title: "Using Paginated APIs (Video)"
+        url: "https://www.youtube.com/watch?v=4Fdyft-ky0w"
+    draft: true
+
+  # Day 3 - Wednesday
+  - folder: 04-scraping
+    title: "Web Scraping"
+    description: "Extracting data from websites using BeautifulSoup and Playwright, handling dynamic content"
+    slides: 04-scraping/nikkei-scraping.pptx  # 106MB - will convert to PDF
+    data_files:
+      - "*.csv"
+      - "*.xlsx"
+    links:
+      - title: "Automatic Scraper Tutorial"
+        url: "https://www.youtube.com/watch?v=QNKxzkNpsko"
+    draft: true
+
+  # Day 4 - Thursday Part 1
+  - folder: 05-ai
+    title: "AI for Journalism"
+    description: "Using AI tools for data extraction from PDFs, text analysis, and document processing"
+    slides: 05-ai/03-dojo-practical-ai.pptx  # 141MB!
+    data_files:
+      - "pdfs/*.pdf"
+      - "*.pdf"
+      - "*.png"
+    links:
+      - title: "Claude for Sheets Example"
+        url: "https://docs.google.com/spreadsheets/d/1vC7k7ft9TsPDud2rl3MOMqUZBxdJbC4jQ59QEMPP0nY/edit"
+      - title: "Hugging Face"
+        url: "https://huggingface.co/models"
+      - title: "Anything LLM"
+        url: "https://anythingllm.com/"
+    draft: true
+
+  # Day 4 - Thursday Part 2
+  - folder: 06-visualization
+    title: "Data Visualization"
+    description: "Creating effective data visualizations with matplotlib, seaborn, and online tools like Datawrapper. Also covers PDF extraction techniques."
+    slides: 06-visualization/Visualization.pptx  # 68MB
+    data_files:
+      - "*.csv"
+      - "*.pdf"
+      - "*.jpg"
+      - "*.png"
+    links:
+      - title: "Feltron Report"
+        url: "http://feltron.com/"
+      - title: "Dear Data"
+        url: "https://www.dear-data.com/theproject"
+      - title: "Designing Viz"
+        url: "https://designingviz.com/"
+      - title: "Datawrapper"
+        url: "https://www.datawrapper.de/"
+      - title: "Datawrapper Academy"
+        url: "https://academy.datawrapper.de/"
+      - title: "Flourish"
+        url: "https://flourish.studio/"
+      - title: "Tabula - PDF Data Extraction"
+        url: "https://tabula.technology/"
+    draft: true
+
+  # Day 5 - Friday / Day 6 - Monday
+  - folder: 07-projects
+    title: "Final Projects"
+    description: "Project work time, troubleshooting, and presentations of data journalism projects"
+    slides: 07-projects/nikkei-projects.pptx  # 4MB
+    draft: true
+
+git_lfs_threshold_mb: 50  # Will catch large PPTX files
+
+# Footer and contact information
+footer:
+  copyright: "©2025, Jonathan Soma"
+  contact:
+    - "Email: [js4571@columbia.edu](mailto:js4571@columbia.edu)"
+    - "Twitter: [@dangerscarf](https://twitter.com/dangerscarf)"
+    - "GitHub: [jsoma](https://github.com/jsoma)"
+
+# External links
+external_links:
+  workshop_signup: "https://www.nikkeibp.co.jp/seminar/nb/ddojo/"
+  short_url: "https://bit.ly/ds-dojo-2025"

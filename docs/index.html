@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>データサイエンティストDOJO 2025</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 16px;
+            padding-bottom: 5em;
+        }
+        h1, h3, h4 { margin-top: 2em; }
+        h2 {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding-top: 2em;
+            padding-bottom: 0.5em;
+            z-index: 100;
+            border-bottom: 2px solid #eee;
+        }
+        /* Give the first h2 (Table of Contents) less top margin */
+        h2:first-of-type {
+            margin-top: 1em;
+            padding-top: 1em;
+        }
+        h3 a {
+            text-decoration: none;
+        }
+        h3 a:hover {
+            text-decoration: underline;
+        }
+        p {
+            margin: 1em 0;
+        }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 4px; 
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+        }
+        pre { 
+            background: #f4f4f4; 
+            padding: 1em; 
+            border-radius: 5px; 
+            overflow-x: auto;
+        }
+        pre code { background: none; padding: 0; }
+        a { color: #0066cc; }
+        img {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        blockquote {
+            border-left: solid lightblue 20px;
+            margin-left: 4em;
+            padding-left: 1em;
+            color: #999;
+        }
+        video {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        .download-box {
+            background: #e8f4f8;
+            padding: 1em;
+            border-radius: 5px;
+            margin: 1em 0;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 2em;
+            margin: 0.5em 0;
+        }
+        li {
+            margin: 0.3em 0;
+        }
+        .section-header {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .resource-buttons {
+            margin: 1em 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        .resource-button {
+            display: inline-block;
+            padding: 0.4em 0.8em;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .resource-button:hover {
+            background: #e0e0e0;
+            border-color: #ccc;
+        }
+        .resource-button.primary {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #90caf9;
+        }
+        .resource-button.primary:hover {
+            background: #bbdefb;
+            border-color: #64b5f6;
+        }
+        .resource-button.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+        .resource-button.completed:hover {
+            background: #c8e6c9;
+            border-color: #81c784;
+        }
+        .data-download {
+            margin: 0.5em 0;
+            font-size: 0.9em;
+        }
+        .download-links {
+            margin: 0.5em 0;
+            line-height: 1.8;
+        }
+        .download-links a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+        .download-links a:hover {
+            text-decoration: underline;
+        }
+        p:last {
+            margin-bottom: 0;
+            margin-top: 5em;
+        }
+    </style>
+</head>
+<body>
+<h1 id="dojo-2025">データサイエンティストDOJO 2025</h1>
+<p>6-day intensive Python workshop for covering data analysis, APIs, web scraping, AI, and visualization</p>
+<div style="text-align: center; margin: 2em 0; padding: 1.5em; background: #f6f8fa; border-radius: 8px;">
+    <h3 style="margin-top: 0;">🚀 Start Coding in the Cloud</h3>
+    <div style="margin: 1em 0;">
+        <a href="https://codespaces.new/jsoma/2025-ds-dojo?ref=codespaces" style="display: inline-block; padding: 12px 24px; background: #238636; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
+            ☁️ Create Codespace →
+        </a>
+        <span style="margin: 0 1em; color: #666;">or</span>
+        <a href="https://github.com/jsoma/2025-ds-dojo/tree/codespaces" style="display: inline-block; padding: 12px 24px; background: #0969da; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
+            📂 View on GitHub
+        </a>
+    </div>
+    <p style="margin-bottom: 0; color: #666; font-size: 0.9em;">
+        Codespaces provides a full VS Code environment in your browser with all dependencies pre-installed
+    </p>
+</div>
+
+<h2 id="python-basics">Python Basics</h2>
+<div id="slides-data-dojo-intro" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-data-dojo-intro', './01-python-basics/data-dojo-intro.pptx')">
+        <img src="./01-python-basics/data-dojo-intro-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./01-python-basics/data-dojo-intro.pptx" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./01-python-basics/data-dojo-intro.pptx" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="introduction-to-python"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/01-python-basics/intro.ipynb">Introduction to Python →</a></h3>
+<p>Your first Python notebook</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/01-python-basics/intro.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/01-python-basics/intro-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./01-python-basics/intro.ipynb">worksheet</a> | 
+<a href="./01-python-basics/intro-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="python-fundamentals-homework"><a href="./01-python-basics/homework.html">Python Fundamentals homework →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h3 id="python-basics_1"><a href="./01-python-basics/guide.html">Python basics →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h2 id="data-analysis-with-pandas">Data Analysis with Pandas</h2>
+<div id="slides-structured-data" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-structured-data', './02-pandas/structured-data.pdf')">
+        <img src="./02-pandas/structured-data-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./02-pandas/structured-data.pdf" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./02-pandas/structured-data.pdf" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="data-analysis-with-pandas_1"><a href="./02-pandas/pandas-guide.html">Data Analysis with Pandas →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h3 id="data-cleaning"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/03-cleaning-worksheet.ipynb">Data Cleaning →</a></h3>
+<p>Cleaning and transforming messy data</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/03-cleaning-worksheet.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/03-cleaning-worksheet-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./02-pandas/03-cleaning-worksheet.ipynb">worksheet</a> | 
+<a href="./02-pandas/03-cleaning-worksheet-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./02-pandas/03-cleaning-worksheet-data.zip">02-pandas/03-cleaning-worksheet-data.zip</a>
+
+</div>
+
+</ul>
+<h3 id="e-stat-data-analysis"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/02-estats-pandas.ipynb">E-Stat Data Analysis →</a></h3>
+<p>Working with Japanese government statistics</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/02-estats-pandas.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/02-estats-pandas-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./02-pandas/02-estats-pandas.ipynb">worksheet</a> | 
+<a href="./02-pandas/02-estats-pandas-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./02-pandas/02-estats-pandas-data.zip">02-pandas/02-estats-pandas-data.zip</a>
+
+</div>
+
+</ul>
+<h3 id="pandas-basics"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/01-pandas basics.ipynb">Pandas Basics →</a></h3>
+<p>Introduction to pandas DataFrames</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/01-pandas basics.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/02-pandas/01-pandas basics-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./02-pandas/01-pandas basics.ipynb">worksheet</a> | 
+<a href="./02-pandas/01-pandas basics-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./02-pandas/01-pandas basics-data.zip">02-pandas/01-pandas basics-data.zip</a>
+
+</div>
+
+</ul>
+<h2 id="working-with-apis">Working with APIs</h2>
+<div id="slides-nikkei-apis" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-nikkei-apis', './03-apis/nikkei-apis.pptx')">
+        <img src="./03-apis/nikkei-apis-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./03-apis/nikkei-apis.pptx" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./03-apis/nikkei-apis.pptx" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="working-with-apis_1"><a href="./03-apis/apis-guide.html">Working with APIs →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h3 id="undocumented-apis"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb">Undocumented APIs →</a></h3>
+<p>Finding and using undocumented APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb">worksheet</a> | 
+<a href="./03-apis/05-Rakuten Seiyu-Undocumented APIs-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="rakuten-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten.ipynb">Rakuten API →</a></h3>
+<p>Using Japanese e-commerce APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/04-Rakuten.ipynb">worksheet</a> | 
+<a href="./03-apis/04-Rakuten-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="weather-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather.ipynb">Weather API →</a></h3>
+<p>Getting weather data from APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/03-Weather.ipynb">worksheet</a> | 
+<a href="./03-apis/03-Weather-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="pokemon-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon.ipynb">Pokemon API →</a></h3>
+<p>Practice with a fun API</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/02-Pokemon.ipynb">worksheet</a> | 
+<a href="./03-apis/02-Pokemon-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="earthquake-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes.ipynb">Earthquake API →</a></h3>
+<p>Using the USGS earthquake API</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/01-Earthquakes.ipynb">worksheet</a> | 
+<a href="./03-apis/01-Earthquakes-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h2 id="web-scraping">Web Scraping</h2>
+<div id="slides-nikkei-scraping" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-nikkei-scraping', './04-scraping/nikkei-scraping.pptx')">
+        <img src="./04-scraping/nikkei-scraping-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./04-scraping/nikkei-scraping.pptx" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./04-scraping/nikkei-scraping.pptx" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="suumo-real-estate-scraper"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/SUUMO.ipynb">SUUMO Real Estate Scraper →</a></h3>
+<p>Scraping Japanese real estate listings from SUUMO</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/SUUMO.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/SUUMO-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/SUUMO.ipynb">worksheet</a> | 
+<a href="./04-scraping/SUUMO-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="japanese-data-cleaning"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/01-Japanese-data-cleaning.ipynb">Japanese Data Cleaning →</a></h3>
+<p>Cleaning and processing Japanese text data</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/01-Japanese-data-cleaning.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/01-Japanese-data-cleaning-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/01-Japanese-data-cleaning.ipynb">worksheet</a> | 
+<a href="./04-scraping/01-Japanese-data-cleaning-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="data-cleaning-worksheet"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/02-cleaning-worksheet.ipynb">Data Cleaning Worksheet →</a></h3>
+<p>Practice cleaning messy data</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/02-cleaning-worksheet.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/02-cleaning-worksheet-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/02-cleaning-worksheet.ipynb">worksheet</a> | 
+<a href="./04-scraping/02-cleaning-worksheet-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./04-scraping/02-cleaning-worksheet-data.zip">04-scraping/02-cleaning-worksheet-data.zip</a>
+
+</div>
+
+</ul>
+<h3 id="national-azabu-supermarket-scraper"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/National Azabu scraper.ipynb">National Azabu Supermarket Scraper →</a></h3>
+<p>Scraping product data from National Azabu</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/National Azabu scraper.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/National Azabu scraper-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/National Azabu scraper.ipynb">worksheet</a> | 
+<a href="./04-scraping/National Azabu scraper-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="live-scraping-example"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/In-class example.ipynb">Live Scraping Example →</a></h3>
+<p>In-class demonstration of web scraping techniques</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/In-class example.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/In-class example-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/In-class example.ipynb">worksheet</a> | 
+<a href="./04-scraping/In-class example-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="japanese-data-cleaning-solutions"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Japanese data cleaning COMPLETED.ipynb">Japanese Data Cleaning - Solutions →</a></h3>
+<p>Completed version with solutions</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Japanese data cleaning COMPLETED.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Japanese data cleaning COMPLETED-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/Japanese data cleaning COMPLETED.ipynb">worksheet</a> | 
+<a href="./04-scraping/Japanese data cleaning COMPLETED-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="temperature-data-scraper"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Temp scrapers.ipynb">Temperature Data Scraper →</a></h3>
+<p>Scraping weather and temperature data</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Temp scrapers.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/04-scraping/Temp scrapers-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./04-scraping/Temp scrapers.ipynb">worksheet</a> | 
+<a href="./04-scraping/Temp scrapers-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="scraping-prompt-codegen-type"><a href="./04-scraping/scraping-prompt-2.html">Scraping Prompt Codegen Type →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h3 id="scraping-prompt-without-codegen"><a href="./04-scraping/scraping-prompt-1.html">Scraping Prompt Without Codegen →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h3 id="scraping"><a href="./04-scraping/scraping-guide.html">Scraping →</a></h3>
+<div>
+
+</div>
+
+</ul>
+<h2 id="ai-for-journalism">AI for Journalism</h2>
+<div id="slides-03-dojo-practical-ai" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-03-dojo-practical-ai', './05-ai/03-dojo-practical-ai.pptx')">
+        <img src="./05-ai/03-dojo-practical-ai-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./05-ai/03-dojo-practical-ai.pptx" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./05-ai/03-dojo-practical-ai.pptx" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="ai-text-analysis-with-japanese-nlp"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/05-ai/Text analysis.ipynb">AI Text Analysis with Japanese NLP →</a></h3>
+<p>Using spaCy and transformers for Japanese text processing</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/05-ai/Text analysis.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/05-ai/Text analysis-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./05-ai/Text analysis.ipynb">worksheet</a> | 
+<a href="./05-ai/Text analysis-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./05-ai/Text analysis-data.zip">05-ai/Text analysis-data.zip</a>
+
+</div>
+
+</ul>
+<h2 id="data-visualization">Data Visualization</h2>
+<div id="slides-Visualization" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-Visualization', './06-visualization/Visualization.pptx')">
+        <img src="./06-visualization/Visualization-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./06-visualization/Visualization.pptx" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+        <embed src="./06-visualization/Visualization.pptx" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<h3 id="data-visualization-basics"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/06-visualization/01-data-visualization-basics.ipynb">Data Visualization Basics →</a></h3>
+<p>Introduction to creating charts and graphs with matplotlib and seaborn</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/06-visualization/01-data-visualization-basics.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/06-visualization/01-data-visualization-basics-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./06-visualization/01-data-visualization-basics.ipynb">worksheet</a> | 
+<a href="./06-visualization/01-data-visualization-basics-ANSWERS.ipynb">completed</a><br>
+
+📦 Data: <a href="./06-visualization/01-data-visualization-basics-data.zip">06-visualization/01-data-visualization-basics-data.zip</a>
+
+</div>
+
+</ul>
+<h3 id="data-visualization-pdfs-and-ai"><a href="./06-visualization/visualization-guide.html">Data Visualization, PDFs and AI →</a></h3>
+<div>
+
+</div>
+
+</ul>
+</body>
+</html>

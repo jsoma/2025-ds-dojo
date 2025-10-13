@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Working with APIs</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 16px;
+            padding-bottom: 5em;
+        }
+        h1, h3, h4 { margin-top: 2em; }
+        h2 {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding-top: 2em;
+            padding-bottom: 0.5em;
+            z-index: 100;
+            border-bottom: 2px solid #eee;
+        }
+        /* Give the first h2 (Table of Contents) less top margin */
+        h2:first-of-type {
+            margin-top: 1em;
+            padding-top: 1em;
+        }
+        h3 a {
+            text-decoration: none;
+        }
+        h3 a:hover {
+            text-decoration: underline;
+        }
+        p {
+            margin: 1em 0;
+        }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 4px; 
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+        }
+        pre { 
+            background: #f4f4f4; 
+            padding: 1em; 
+            border-radius: 5px; 
+            overflow-x: auto;
+        }
+        pre code { background: none; padding: 0; }
+        a { color: #0066cc; }
+        img {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        blockquote {
+            border-left: solid lightblue 20px;
+            margin-left: 4em;
+            padding-left: 1em;
+            color: #999;
+        }
+        video {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        .download-box {
+            background: #e8f4f8;
+            padding: 1em;
+            border-radius: 5px;
+            margin: 1em 0;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 2em;
+            margin: 0.5em 0;
+        }
+        li {
+            margin: 0.3em 0;
+        }
+        .section-header {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .resource-buttons {
+            margin: 1em 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        .resource-button {
+            display: inline-block;
+            padding: 0.4em 0.8em;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .resource-button:hover {
+            background: #e0e0e0;
+            border-color: #ccc;
+        }
+        .resource-button.primary {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #90caf9;
+        }
+        .resource-button.primary:hover {
+            background: #bbdefb;
+            border-color: #64b5f6;
+        }
+        .resource-button.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+        .resource-button.completed:hover {
+            background: #c8e6c9;
+            border-color: #81c784;
+        }
+        .data-download {
+            margin: 0.5em 0;
+            font-size: 0.9em;
+        }
+        .download-links {
+            margin: 0.5em 0;
+            line-height: 1.8;
+        }
+        .download-links a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+        .download-links a:hover {
+            text-decoration: underline;
+        }
+        p:last {
+            margin-bottom: 0;
+            margin-top: 5em;
+        }
+    </style>
+</head>
+<body>
+<h1 id="working-with-apis">Working with APIs</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#using-apis-with-python">Using APIs with Python</a></li>
+<li><a href="#additional-links">Additional links</a></li>
+<li><a href="#ai-prompts-for-apis">AI Prompts for APIs</a></li>
+</ul>
+<h2 id="using-apis-with-python">Using APIs with Python</h2>
+<p>APIs (Application Programming Interfaces) allow you to programmatically access data from various services.</p>
+<h2 id="additional-links">Additional links</h2>
+<ul>
+<li><a href="https://inspectelement.org/">Inspect Element</a>, a series of tutorials about Undocumented APIs</li>
+<li><a href="https://www.youtube.com/watch?v=4Fdyft-ky0w">Using paginated APIs with Python (four ways!)</a>, a video from me about going through APIs that have multiple pages of results</li>
+</ul>
+<h2 id="ai-prompts-for-apis">AI Prompts for APIs</h2>
+<p>You can get a description of the structure of your data like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">describe_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">describe_data</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">describe_data</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">describe_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+
+<p>This prompt is a little more complicated, because usually ChatGPT tries to do something <em>too crazy</em>. Feel free to adjust the prompt until it works for you.</p>
+<pre class="prompt">
+I have API output that is a python dictionary, saved as data. The data structure is described as below. Provide code to convert the data into a dataframe of **______**. This probably just means pd.json_normalize with the appropriate key. Don't use meta. If you need to ask clarifying questions about the data itself, provide code snippets I can run to help answer them. You don't need to use print since I'm in a Jupyter notebook. Use functions only if absolutely necessary.
+
+<strong>(paste description of data)</strong>
+</pre>
+</body>
+</html>

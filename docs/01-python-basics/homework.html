@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python Fundamentals homework</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 16px;
+            padding-bottom: 5em;
+        }
+        h1, h3, h4 { margin-top: 2em; }
+        h2 {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding-top: 2em;
+            padding-bottom: 0.5em;
+            z-index: 100;
+            border-bottom: 2px solid #eee;
+        }
+        /* Give the first h2 (Table of Contents) less top margin */
+        h2:first-of-type {
+            margin-top: 1em;
+            padding-top: 1em;
+        }
+        h3 a {
+            text-decoration: none;
+        }
+        h3 a:hover {
+            text-decoration: underline;
+        }
+        p {
+            margin: 1em 0;
+        }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 4px; 
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+        }
+        pre { 
+            background: #f4f4f4; 
+            padding: 1em; 
+            border-radius: 5px; 
+            overflow-x: auto;
+        }
+        pre code { background: none; padding: 0; }
+        a { color: #0066cc; }
+        img {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        blockquote {
+            border-left: solid lightblue 20px;
+            margin-left: 4em;
+            padding-left: 1em;
+            color: #999;
+        }
+        video {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        .download-box {
+            background: #e8f4f8;
+            padding: 1em;
+            border-radius: 5px;
+            margin: 1em 0;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 2em;
+            margin: 0.5em 0;
+        }
+        li {
+            margin: 0.3em 0;
+        }
+        .section-header {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .resource-buttons {
+            margin: 1em 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        .resource-button {
+            display: inline-block;
+            padding: 0.4em 0.8em;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .resource-button:hover {
+            background: #e0e0e0;
+            border-color: #ccc;
+        }
+        .resource-button.primary {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #90caf9;
+        }
+        .resource-button.primary:hover {
+            background: #bbdefb;
+            border-color: #64b5f6;
+        }
+        .resource-button.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+        .resource-button.completed:hover {
+            background: #c8e6c9;
+            border-color: #81c784;
+        }
+        .data-download {
+            margin: 0.5em 0;
+            font-size: 0.9em;
+        }
+        .download-links {
+            margin: 0.5em 0;
+            line-height: 1.8;
+        }
+        .download-links a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+        .download-links a:hover {
+            text-decoration: underline;
+        }
+        p:last {
+            margin-bottom: 0;
+            margin-top: 5em;
+        }
+    </style>
+</head>
+<body>
+<h1 id="python-fundamentals-homework">Python Fundamentals homework</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#assignment">Assignment</a></li>
+<li><a href="#hints-and-tips">Hints and tips</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#dictionaries">Dictionaries</a></li>
+<li><a href="#tips">Tips</a></li>
+</ul>
+<h1 id="homework-part-1-data-sources-survey">Homework, Part 1: Data sources survey</h1>
+<p>Please take the <a href="https://docs.google.com/forms/d/e/1FAIpQLSeESNZJkuUXLg2W7Uf-FROW1VCZflwMGr3Dib8yPT4rvLWoSw/viewform?usp=sf_link">data sources survey here</a>. It will help me know what kind of data or products to focus on.</p>
+<h1 id="homework-part-2-basic-python">Homework, Part 2: Basic Python</h1>
+<p>Please do some of <a href="https://littlecolumns.com/learn/python">the Python tutorial</a> if you have not yet.</p>
+<h2 id="setup">Setup</h2>
+<p>Please create a new notebook named 'First Homework'.</p>
+<p>Turn the first cell into a <strong>Markdown cell</strong> and add:</p>
+<ul>
+<li>The first line should be your full name</li>
+<li>The second line should be the date</li>
+<li>The third line should be "Homework: Basic Python"</li>
+</ul>
+<p>They should be displayed as a <strong>list</strong>, with the little bullet points on the left. You can look at what we did in class, <a href="https://www.markdownguide.org/basic-syntax/">check this reference sheet</a>, or even ask ChatGPT. </p>
+<h2 id="assignment">Assignment</h2>
+<p>When run from top to bottom, this notebook should prompt the user for their year of birth, and display the information below. Use complete sentences (don't just print the answer), and it's okay for calculations to be approximate.</p>
+<p>The <strong>first cell</strong> should use <code>input</code> to prompt the user for their year of birth. The <strong>second cell</strong> should do all of the rest.</p>
+<ol>
+<li>How old the user is</li>
+<li>In that time, how many times the user's heart has beaten.</li>
+<li>In that time, how many times a blue whale's heart has beaten.</li>
+<li>In that time, how many times a rabbit's heart has beaten. If the answer to rabbit heartbeats is more than a billion, say "XXX billion" instead of the very long raw number</li>
+<li>There are several ways to calculate and format/display numbers in Python – string addition, f-strings, commas, etc etc etc. Redo one of the above questions above with another technique and briefly explain the pros and cons of each approach.</li>
+<li>Whether they are the same age as you, older or younger</li>
+<li>If older or younger, how many years difference</li>
+<li>If they were born in an even or odd year</li>
+<li>How many prime ministers have been in office since the user was born</li>
+<li>If someone says they were born in the future, ask them for their year of birth again. Assume they'll do it right the second time.</li>
+</ol>
+<h2 id="hints-and-tips">Hints and tips</h2>
+<blockquote>
+<p>If you use ChatGPT to help with this assignment, think about the tradeoffs between the learning process vs the process of having something completed. We'll talk more about that tomorrow!</p>
+</blockquote>
+<p>To review the basics of Python, visit <a href="https://littlecolumns.com/learn/python">the Little Columns tutorial</a></p>
+<p>When you ask a user for information, Python always saves it as a string. But a year as a string isn't very useful! You'll need to convert it to an integer before you do anything to it (there might be some tips in the tutorial to help you with that).</p>
+<p>How fast does a blue whale's heart beat? I don't know, I'm not a biologist - research it!</p>
+<p>Before you write out a solution as code, write out what you want to do in words (a comment would be good for this). Breaking down the steps as "real" text can do a lot to help you organize your Python code.</p>
+<p><code>XXX billion</code> will involve either division, rounding, or converting to an integer.</p>
+<p>You might need to know about...</p>
+<ul>
+<li>multiple comparisons in if</li>
+<li>adding one to variables (incrementing)</li>
+<li>else/elif</li>
+<li>modulo (for the even/odd one)</li>
+</ul>
+<p>Anything not covered in the tutorial probably exists somewhere on the internet, or through ChatGPT!</p>
+<h1 id="homework-part-3-lists-and-dictionaries">Homework, Part 3: Lists and dictionaries</h1>
+<p>Lists and dictionaries are always tough to figure out, and they only make sense once you've really spent some time with them. This homework and <a href="https://littlecolumns.com/learn/python">the Little Columns tutorial</a> will really help you out! <strong>Be sure to check the tips at the bottom!</strong></p>
+<h2 id="lists">Lists</h2>
+<ol>
+<li>Make a list of the following numbers: 22, 90, 0, -10, 3, 22, and 48</li>
+<li>Display the number of elements in the list.</li>
+<li>Display the 4th element of this list.</li>
+<li>Display the sum of the 2nd and 4th element of the list.</li>
+<li>Display the 2nd-largest value in the list.</li>
+<li>Display the last element of the original unsorted list</li>
+<li>Display the sum of all of the numbers divided by two.</li>
+<li>Print whether the median or the mean of the numbers is higher</li>
+</ol>
+<h2 id="dictionaries">Dictionaries</h2>
+<ol>
+<li>Sometimes dictionaries are used to describe multiple aspects of a single object. Like, say, a movie. Define a dictionary called movie that works with the following code.</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;My favorite movie is&quot;</span><span class="p">,</span> <span class="n">movie</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="s2">&quot;which was released in&quot;</span><span class="p">,</span> <span class="n">movie</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span> <span class="s2">&quot;and was directed by&quot;</span><span class="p">,</span> <span class="n">movie</span><span class="p">[</span><span class="s1">&#39;director&#39;</span><span class="p">])</span>
+</code></pre></div>
+
+<ol>
+<li>On the lines after that, add keys to the movie dictionary for budget and revenue (you'll use code like <code>movie['budget'] = 1000</code>), and print out the difference between the two.</li>
+<li>If the movie cost more to make than it made in theaters, print "That was a bad investment". If the film's revenue was more than five times the amount it cost to make, print "That was a great investment." Otherwise print "That was an okay investment."</li>
+<li>Sometimes dictionaries are used to describe the same aspects of many different objects. Make ONE dictionary that describes the population of the boroughs of NYC. Manhattan has 1.6 million residents, Brooklyn has 2.6m, Bronx has 1.4m, Queens has 2.3m and Staten Island has 470,000. (Tip: keeping it all in either millions or thousands is a good idea)</li>
+<li>Display the population of Brooklyn.</li>
+<li>Display the combined population of all five boroughs.</li>
+<li>Display what percent of NYC's population lives in Manhattan.</li>
+</ol>
+<h2 id="tips">Tips</h2>
+<p>There are two ways to sort a list! One is just for display, and one sorts the list permanently. Keep an eye out for which one you're using.</p>
+<p>Programmers are weird about counting. What number do they start with?</p>
+<p>There might be a magic way to get the last item of a list in Python (or to start counting from the end).</p>
+<p>When dealing with multiple numbers - population, for example - be sure to keep them all at the same level. If Brooklyn has 1.4 million people and Staten Island as 470,000, storing their population as 1.4 and 470000 isn't going to let you compare them accurately!</p>
+</body>
+</html>
