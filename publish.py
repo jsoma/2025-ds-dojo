@@ -466,11 +466,23 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
     # Handle slides if specified (item-specific or section-level)
     slide_file = metadata.get('slides')
     if slide_file:
+        # If a PPTX is specified, convert to PDF and link to the PDF instead
+        slide_path = notebook_dir / slide_file
+        link_name = Path(slide_file).name
+        link_target = Path(slide_file).name
+        if not slide_path.exists():
+            slide_path = Path(slide_file)
+        if slide_path.suffix.lower() == '.pptx':
+            converted = convert_pptx_to_pdf(slide_path)
+            if converted:
+                link_name = converted.name
+                link_target = converted.name
+
         # Add simple markdown cell with slide link after setup cells
         slide_link_cell = {
             "cell_type": "markdown",
             "metadata": {},
-            "source": [f"**Slides:** [{Path(slide_file).name}](./{Path(slide_file).name})"]
+            "source": [f"**Slides:** [{link_name}](./{link_target})"]
         }
         # Insert after all setup cells
         insert_pos = len(setup_cells)
@@ -478,15 +490,15 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
         exercise_nb['cells'].insert(insert_pos, slide_link_cell)
 
         # Copy slide file to section output folder
-        source_pdf = notebook_dir / slide_file
+        source_pdf = notebook_dir / link_target
         if not source_pdf.exists():
             # Try as absolute path from project root
-            source_pdf = Path(slide_file)
+            source_pdf = Path(link_target)
         if source_pdf.exists():
-            dest_pdf = output_subdir / Path(slide_file).name
+            dest_pdf = output_subdir / Path(link_target).name
             if not dest_pdf.exists():
                 shutil.copy2(source_pdf, dest_pdf)
-                print(f"  → Copied slide file: {slide_file}")
+                print(f"  → Copied slide file: {link_target}")
         else:
             print(f"\n❌ ERROR: Slide file not found: {slide_file}")
             print(f"   Looked in: {notebook_dir / slide_file}")
@@ -898,6 +910,9 @@ def generate_slide_embed(slide_file, notebook_dir, output_dir, item_type='notebo
         source_pdf = source_file
         pdf_filename = Path(slide_file).name
 
+    # Ensure links/embeds point to the PDF filename (even if original was PPTX)
+    slide_file_path = f"{section_folder}/{pdf_filename}" if section_folder and item_type == 'index' else pdf_filename
+
     dest_pdf = actual_output_dir / pdf_filename
     if not dest_pdf.exists():
         shutil.copy2(source_pdf, dest_pdf)
@@ -928,7 +943,7 @@ def generate_slide_embed(slide_file, notebook_dir, output_dir, item_type='notebo
         </p>
     </div>
     <div class="slide-container" style="display: none;">
-        <embed src="./{slide_file_path}" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    <embed src="./{slide_file_path}" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
     </div>
 </div>
 
