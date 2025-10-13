@@ -82,6 +82,7 @@ def markdown_to_html(content, title=""):
         body {{
             max-width: 800px;
             margin: 40px auto;
+            margin-top: 0;
             padding: 0 20px;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             line-height: 1.6;
@@ -98,11 +99,6 @@ def markdown_to_html(content, title=""):
             padding-bottom: 0.5em;
             z-index: 100;
             border-bottom: 2px solid #eee;
-        }}
-        /* Give the first h2 (Table of Contents) less top margin */
-        h2:first-of-type {{
-            margin-top: 1em;
-            padding-top: 1em;
         }}
         h3 a {{
             text-decoration: none;
@@ -1225,11 +1221,15 @@ def create_index(notebooks, config, output_dir):
 .hero {
     max-width: 1060px;
     margin: 0 auto;
-    padding: 64px 24px 56px;
+    padding: 8em 0;
     text-align: center;
 }
 .hero h1 { margin: 0 0 0.4em; font-size: 2.4em; }
 .hero .subtitle { margin: 0 auto; max-width: 980px; color: #4a4a4a; font-size: 1.1em; }
+h2 {
+    font-size: 2em;
+    padding-top: 3em;
+}
 </style>
 
 <div class="hero-bleed">
