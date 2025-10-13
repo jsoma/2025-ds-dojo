@@ -247,17 +247,24 @@ def load_config():
     with open(config_path, 'r') as f:
         return yaml.safe_load(f)
 
-def create_setup_cell(zip_name, config, install_packages="pandas natural_pdf tqdm", section_folder=None):
-    """Create setup cell that works in Colab, Jupyter, etc."""
+def create_setup_cells(zip_name, config, install_packages="pandas natural_pdf tqdm", section_folder=None, for_codespaces=False):
+    """Create setup cells that work in Colab, Jupyter, etc.
+
+    Returns a list of cells (install cell and optionally download cell).
+    If for_codespaces=True, returns empty list since setup is not needed.
+    """
+    # Skip setup cells entirely for Codespaces (everything is pre-installed)
+    if for_codespaces:
+        return []
+
+    cells = []
     github_repo = config['github_repo']
     github_branch = config.get('github_branch', 'main')
     output_dir = config.get('output_dir', 'docs')
-    
-    source_lines = []
-    
-    # Handle package installation first
+
+    # Create install cell if packages are specified
     if install_packages:
-        source_lines.append("# Install required packages\n")
+        install_lines = ["# Install required packages\n"]
         if isinstance(install_packages, str):
             # If it's a string, split it into a list
             packages = install_packages.split()
@@ -265,33 +272,43 @@ def create_setup_cell(zip_name, config, install_packages="pandas natural_pdf tqd
             packages = install_packages
         else:
             packages = []
-            
-        # Install each package separately
+
+        # Install each package separately using %pip
         for package in packages:
             if package.strip():  # Only if package name is not empty
-                source_lines.append(f"!pip install --upgrade --quiet {package.strip()}\n")
-        source_lines.append("\n")
-    
-    # Only add imports if we have a zip file to download
+                install_lines.append(f"%pip install --upgrade --quiet {package.strip()}\n")
+
+        if packages:
+            cells.append({
+                "cell_type": "code",
+                "metadata": {},
+                "source": install_lines,
+                "execution_count": None,
+                "outputs": []
+            })
+
+    # Create download cell if zip file is specified
     if zip_name:
-        source_lines.extend([
+        download_lines = [
+            "# Download and extract data files\n",
             "import os\n",
             "import urllib.request\n",
             "import zipfile\n",
-            "\n",
-        ])
-    
-    # Only add download/extract code if we have a zip file
-    if zip_name:
+            "\n"
+        ]
+
+        # URL encode the zip name for Colab compatibility
+        import urllib.parse
+        encoded_zip_name = urllib.parse.quote(zip_name)
+
         # Include section folder in the URL if provided
         if section_folder:
-            zip_url = f"{output_dir}/{section_folder}/{zip_name}"
+            encoded_zip_url = f"{output_dir}/{section_folder}/{encoded_zip_name}"
         else:
-            zip_url = f"{output_dir}/{zip_name}"
+            encoded_zip_url = f"{output_dir}/{encoded_zip_name}"
 
-        source_lines.extend([
-            "# Download and extract data files\n",
-            f"url = 'https://github.com/{github_repo}/raw/{github_branch}/{zip_url}'\n",
+        download_lines.extend([
+            f"url = 'https://github.com/{github_repo}/raw/{github_branch}/{encoded_zip_url}'\n",
             "print(f'Downloading data from {url}...')\n",
             f"urllib.request.urlretrieve(url, '{zip_name}')\n",
             "\n",
@@ -302,16 +319,16 @@ def create_setup_cell(zip_name, config, install_packages="pandas natural_pdf tqd
             f"os.remove('{zip_name}')\n",
             "print('✓ Data files extracted!')"
         ])
-    else:
-        source_lines.append("print('✓ Packages installed!')")
-    
-    return {
-        "cell_type": "code",
-        "metadata": {},
-        "source": source_lines,
-        "execution_count": None,
-        "outputs": []
-    }
+
+        cells.append({
+            "cell_type": "code",
+            "metadata": {},
+            "source": download_lines,
+            "execution_count": None,
+            "outputs": []
+        })
+
+    return cells
 
 def process_notebook(notebook_path, output_dir, config):
     """Process a single notebook and return info for index."""
@@ -358,15 +375,18 @@ def process_notebook(notebook_path, output_dir, config):
                 "outputs": []
             }
     
-    # Add setup cell if data files or install packages are specified
+    # Add setup cells if data files or install packages are specified
+    # (Skip for Codespaces branch)
+    setup_cells = []  # Initialize empty list
     if metadata.get('data_files') or metadata.get('install'):
         zip_name = f"{base_name}-data.zip" if metadata.get('data_files') else None
         install_packages = metadata.get('install', 'pandas natural_pdf tqdm')
-        setup_cell = create_setup_cell(zip_name, config, install_packages, section_folder=notebook_dir.name)
+        setup_cells = create_setup_cells(zip_name, config, install_packages, section_folder=notebook_dir.name)
 
-        # Insert setup cell at position 0 (very first cell)
-        complete_nb['cells'].insert(0, setup_cell)
-        exercise_nb['cells'].insert(0, setup_cell)
+        # Insert setup cells at the beginning (in reverse order to maintain order)
+        for cell in reversed(setup_cells):
+            complete_nb['cells'].insert(0, cell)
+            exercise_nb['cells'].insert(0, cell)
     
     # Write output files
     output_dir = Path(output_dir)
@@ -382,14 +402,14 @@ def process_notebook(notebook_path, output_dir, config):
     # Handle slides if specified (item-specific or section-level)
     slide_file = metadata.get('slides')
     if slide_file:
-        # Add simple markdown cell with slide link after setup cell
+        # Add simple markdown cell with slide link after setup cells
         slide_link_cell = {
             "cell_type": "markdown",
             "metadata": {},
             "source": [f"**Slides:** [{Path(slide_file).name}](./{Path(slide_file).name})"]
         }
-        # Insert at position 1 if setup cell exists, otherwise at position 0
-        insert_pos = 1 if (metadata.get('data_files') or metadata.get('install')) else 0
+        # Insert after all setup cells
+        insert_pos = len(setup_cells)
         complete_nb['cells'].insert(insert_pos, slide_link_cell)
         exercise_nb['cells'].insert(insert_pos, slide_link_cell)
 
@@ -927,7 +947,15 @@ def create_index(notebooks, config, output_dir):
     for section in section_order:
         section_items = sections.get(section, [])
         notebooks_md.append(f'\n## {section}\n')
-        
+
+        # Check if this is a draft section (all items in section would be draft placeholders)
+        if section_items and len(section_items) == 1 and section_items[0].get('is_draft'):
+            # This is a draft section - just show placeholder
+            if section_items[0].get('description'):
+                notebooks_md.append(f"\n{section_items[0]['description']}\n\n")
+            notebooks_md.append("*Content will be uploaded later.*\n")
+            continue
+
         # Add section slides if available
         section_cfg = section_configs.get(section, {})
         if section_cfg.get('slides'):
@@ -936,21 +964,21 @@ def create_index(notebooks, config, output_dir):
             section_folder = section_dir.name if section_items else None
             slide_html = generate_slide_embed(section_cfg['slides'], section_dir.parent, Path(config.get('output_dir', 'docs')), 'index', section_folder=section_folder)
             notebooks_md.append('\n' + slide_html + '\n')
-        
+
         # Sort items: first by those with order (ascending), then by filename (descending)
         def sort_key(item):
-            if item['order'] is not None:
+            if item.get('order') is not None:
                 return (0, item['order'], '')  # Items with order come first
             else:
-                return (1, 0, item['name'])  # Then items without order
-        
+                return (1, 0, item.get('name', ''))  # Then items without order
+
         sorted_items = sorted(section_items, key=sort_key)
         # For items without order, we want descending by name
-        items_with_order = [item for item in sorted_items if item['order'] is not None]
-        items_without_order = sorted([item for item in sorted_items if item['order'] is None], 
-                                   key=lambda x: x['name'], reverse=True)
+        items_with_order = [item for item in sorted_items if item.get('order') is not None]
+        items_without_order = sorted([item for item in sorted_items if item.get('order') is None],
+                                   key=lambda x: x.get('name', ''), reverse=True)
         sorted_items = items_with_order + items_without_order
-        
+
         for item in sorted_items:
             # Make title a link with arrow
             if item.get('type') == 'markdown':
@@ -1206,25 +1234,58 @@ def create_codespaces_branch(config, commit=False):
 
     print("  → Collecting files for codespaces branch...")
 
-    # 1. Copy all notebooks from docs/ (both exercise and answer versions)
+    # 1. Copy all notebooks from docs/ and remove setup cells for Codespaces
     notebook_count = 0
-    for notebook in Path('docs').glob('**/*.ipynb'):
+    for notebook_path in Path('docs').glob('**/*.ipynb'):
         # Recreate the directory structure
-        rel_path = notebook.relative_to('docs')
+        rel_path = notebook_path.relative_to('docs')
         dest_path = build_dir / rel_path
         dest_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(notebook, dest_path)
+
+        # Load notebook and remove setup cells for Codespaces
+        with open(notebook_path, 'r') as f:
+            notebook = json.load(f)
+
+        # Remove cells that contain setup/installation code
+        # These are typically the first cells that contain pip install or data download
+        filtered_cells = []
+        for cell in notebook['cells']:
+            if cell['cell_type'] == 'code':
+                source = ''.join(cell.get('source', []))
+                # Skip cells that are clearly setup/install cells
+                if '%pip install' in source or '!pip install' in source:
+                    continue
+                if 'urllib.request.urlretrieve' in source and 'zipfile.ZipFile' in source:
+                    continue
+                if '# Install required packages' in source:
+                    continue
+                if '# Download and extract data files' in source:
+                    continue
+            filtered_cells.append(cell)
+
+        notebook['cells'] = filtered_cells
+
+        # Write the modified notebook to the build directory
+        with open(dest_path, 'w') as f:
+            json.dump(notebook, f, indent=1)
         notebook_count += 1
 
-    print(f"    • Collected {notebook_count} notebooks")
+    print(f"    • Collected {notebook_count} notebooks (with setup cells removed)")
 
     # 2. Copy data files needed by notebooks
     data_count = 0
+    sections = config.get('sections', [])
     for section in sections:
         if isinstance(section, dict):
             folder = section.get('folder')
+            is_draft = section.get('draft', False)
         else:
             folder = section
+            is_draft = False
+
+        # Skip draft sections
+        if is_draft:
+            continue
 
         if folder and Path(folder).exists():
             # Read source notebooks to get their data requirements
@@ -1369,22 +1430,36 @@ def main():
             folder = section.get('folder')
             title = section.get('title', folder)
             section_slides = section.get('slides')
+            is_draft = section.get('draft', False)
         else:
             # Handle if sections is a list of strings
             folder = section
             title = section
             section_slides = None
-            
+            is_draft = False
+
+        # Handle draft sections - just add a placeholder
+        if is_draft:
+            print(f"\nSkipping draft section: {title}")
+            # Add a placeholder item for the index
+            processed_items.append({
+                'section': title,
+                'section_folder': folder,
+                'is_draft': True,
+                'description': section.get('description', '') if isinstance(section, dict) else ''
+            })
+            continue
+
         if not folder or not Path(folder).exists():
             print(f"Warning: Section folder '{folder}' not found")
             continue
-            
+
         # Process notebooks
         for notebook_path in Path(folder).glob('*.ipynb'):
             # Skip checkpoints
             if '.ipynb_checkpoints' in str(notebook_path):
                 continue
-            
+
             print(f"\nProcessing {notebook_path}")
             notebook_info = process_notebook(notebook_path, output_dir, config)
             if notebook_info:
@@ -1395,7 +1470,7 @@ def main():
                 if section_slides:
                     notebook_info['section_slides'] = section_slides
                 processed_items.append(notebook_info)
-        
+
         # Process markdown files
         for markdown_path in Path(folder).glob('*.md'):
             print(f"\nProcessing {markdown_path}")

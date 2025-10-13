@@ -45,6 +45,11 @@ sections:
         url: "https://littlecolumns.com/learn/python"
       - title: "Homework 1 Data Sources Survey"
         url: "https://docs.google.com/forms/d/e/1FAIpQLSeESNZJkuUXLg2W7Uf-FROW1VCZflwMGr3Dib8yPT4rvLWoSw/viewform"
+    data_files:
+      - 01-python-basics/学内違反データ.csv
+      - 01-python-basics/学内違反データ.pdf
+      - 01-python-basics/cheating.pdf
+      - 01-python-basics/cheating.pdf
 
   # Day 2 - Tuesday Morning
   - folder: 02-pandas
