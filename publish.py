@@ -1231,25 +1231,19 @@ def create_index(notebooks, config, output_dir):
     platforms = config.get('platforms', [])
     if 'codespaces' in platforms:
         notebooks_branch = config.get('notebooks_branch', 'codespaces')
-        # Direct link to create a new codespace
-        codespaces_url = f"https://codespaces.new/{github_repo}?ref={notebooks_branch}"
-        # Fallback link to the branch page
-        branch_url = f"https://github.com/{github_repo}/tree/{notebooks_branch}"
+        # Link to open/resume an existing Codespace filtered by repo
+        owner_repo_escaped = github_repo.replace('/', '%2F')
+        resume_url = f"https://github.com/codespaces?query=repo%3A{owner_repo_escaped}"
         codespaces_button = f'''
 <div style="text-align: center; margin: 2em 0; padding: 1.5em; background: #f6f8fa; border-radius: 8px;">
     <h3 style="margin-top: 0;">🚀 Start Coding in the Cloud</h3>
     <div style="margin: 1em 0;">
-        <a href="{codespaces_url}" style="display: inline-block; padding: 12px 24px; background: #238636; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
-            ☁️ Create Codespace →
+        <a href="{resume_url}" style="display: inline-block; padding: 12px 24px; background: #6e7781; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
+            ▶️ Open Codespaces
         </a>
-        <!--
-        <span style="margin: 0 1em; color: #666;">or</span>
-        <a href="{branch_url}" style="display: inline-block; padding: 12px 24px; background: #0969da; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
-            📂 View on GitHub
-        </a> -->
     </div>
     <p style="margin-bottom: 0; color: #666; font-size: 0.9em;">
-        GitHub Codespaces provides a full Visual Studio Code environment in your browser with all dependencies pre-installed
+        GitHub Codespaces is a programming environment that lives in the cloud.
     </p>
 </div>
 '''
