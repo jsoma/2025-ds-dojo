@@ -1213,8 +1213,9 @@ def create_codespaces_branch(config, commit=False):
 
     # Files to include in codespaces branch
     files_to_add = []
+    all_data_files = set()  # Track all data files needed by notebooks
 
-    # Add all notebooks from sections
+    # First pass: collect all notebooks and their required data files
     sections = config.get('sections', [])
     for section in sections:
         if isinstance(section, dict):
@@ -1223,33 +1224,39 @@ def create_codespaces_branch(config, commit=False):
             folder = section
 
         if folder and Path(folder).exists():
-            # Add notebooks
-            for notebook in Path(folder).glob('*.ipynb'):
-                if '.ipynb_checkpoints' not in str(notebook):
-                    files_to_add.append(str(notebook))
+            # Add notebooks and collect their data requirements
+            for notebook_path in Path(folder).glob('*.ipynb'):
+                if '.ipynb_checkpoints' not in str(notebook_path):
+                    files_to_add.append(str(notebook_path))
 
-            # Add data files specified in config
-            if isinstance(section, dict):
-                data_patterns = section.get('data_files', [])
-                for pattern in data_patterns:
-                    for data_file in Path(folder).glob(pattern):
-                        if data_file.is_file():
-                            files_to_add.append(str(data_file))
+                    # Read notebook to get its data files
+                    try:
+                        with open(notebook_path, 'r') as f:
+                            notebook = json.load(f)
+                            metadata = notebook.get('metadata', {}).get('workshop', {})
+                            data_patterns = metadata.get('data_files', [])
 
-            # Add CSV and Excel files by default
+                            # Collect data files referenced by this notebook
+                            for pattern in data_patterns:
+                                for data_file in Path(folder).glob(pattern):
+                                    if data_file.is_file():
+                                        all_data_files.add(str(data_file))
+                    except Exception:
+                        pass  # Skip if notebook can't be read
+
+            # Add CSV and Excel files that are in the folder (likely data files)
             for pattern in ['*.csv', '*.xlsx', '*.xls']:
                 for data_file in Path(folder).glob(pattern):
-                    if data_file.is_file() and str(data_file) not in files_to_add:
-                        files_to_add.append(str(data_file))
+                    if data_file.is_file():
+                        all_data_files.add(str(data_file))
+
+    # Add all collected data files
+    files_to_add.extend(sorted(all_data_files))
 
     # Add requirements file if it exists
     for req_file in ['requirements.txt', 'requirements.in']:
         if Path(req_file).exists():
             files_to_add.append(req_file)
-
-    # Add workshop config
-    if Path('workshop-config.yaml').exists():
-        files_to_add.append('workshop-config.yaml')
 
     # Copy _devcontainer-template to .devcontainer in the codespaces branch
     devcontainer_commands = []
