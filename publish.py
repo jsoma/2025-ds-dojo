@@ -1262,6 +1262,7 @@ h2 {
         codespaces_button = f'''
 <div class="cs-cta" style="text-align: center; margin: 2em 0; padding: 1.5em; background: #f6f8fa; border-radius: 8px; border: 1px solid #e6e8eb;">
     <style>
+    .cs-cta {{ margin-top: 6em; }}
     .cs-cta .row {{ display: grid; grid-template-columns: minmax(240px, 280px) 1fr; align-items: start; gap: 20px; margin: 18px 0; grid-auto-rows: auto; }}
     .cs-cta .btn {{ display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; min-width: 240px; }}
     .cs-cta .btn-green {{ background: #238636; color: #fff; }}
