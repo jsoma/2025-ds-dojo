@@ -167,20 +167,29 @@
 .hero h1 { margin: 0 0 0.4em; font-size: 2.4em; }
 .hero .subtitle { margin: 0 auto; max-width: 980px; color: #4a4a4a; font-size: 1.1em; }
 
-/* Full-bleed H2 (index only) */
+/* Full-bleed H2 (index only) with sticky behavior and centered text */
 h2 {
-    position: static !important; /* override sticky from base styles */
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    position: sticky; /* keep sticky */
+    top: 0;
+    z-index: 100;
     margin-top: 2.4em;
     margin-bottom: 0.9em;
-    padding: 16px clamp(16px, 4vw, 32px);
+    padding: 16px 0; /* align with normal content padding */
+    background: transparent !important; /* background is drawn by ::before */
+    border: none; /* borders drawn by ::before */
+}
+h2::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw; /* paint full-bleed background */
+    top: 0;
+    bottom: 0;
     background: linear-gradient(90deg, #7b28c0 0%, #c43fb7 50%, #d86ecc 100%);
-    color: #fff;
     border-top: 1px solid #ead8f1;
     border-bottom: 1px solid #ead8f1;
-    box-sizing: border-box;
+    z-index: -1;
 }
 </style>
 
