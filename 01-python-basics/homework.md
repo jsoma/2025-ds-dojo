@@ -1,10 +1,12 @@
 ---
 title: Python Fundamentals homework
+description: Now that you've gained a few Python skills and understand Jupyter notebooks, it's time to try to test your abilities on your own.
+order: 3
 ---
 
 # Homework, Part 1: Data sources survey
 
-Please take the [data sources survey here](https://docs.google.com/forms/d/e/1FAIpQLSeESNZJkuUXLg2W7Uf-FROW1VCZflwMGr3Dib8yPT4rvLWoSw/viewform?usp=sf_link). It will help me know what kind of data or products to focus on.
+Please take the [data sources survey here](https://docs.google.com/forms/d/e/1FAIpQLScMlXoLuRvLmTUASbEl2K_7Cr2ZBWEcH9rSO4V1x7zm_tklnQ/viewform?usp=header). It will help me know what kind of data or products to focus on.
 
 # Homework, Part 2: Basic Python
 

@@ -15,6 +15,7 @@ import subprocess
 import sys
 import argparse
 import os
+import fnmatch
 try:
     import markdown
 except ImportError:
@@ -247,6 +248,64 @@ def load_config():
     with open(config_path, 'r') as f:
         return yaml.safe_load(f)
 
+def _deep_merge(base, override):
+    """Recursively merge override into base and return a new dict."""
+    if not isinstance(base, dict):
+        base = {}
+    result = dict(base)
+    for k, v in (override or {}).items():
+        if isinstance(v, dict) and isinstance(result.get(k), dict):
+            result[k] = _deep_merge(result.get(k, {}), v)
+        else:
+            # For lists and scalars, override entirely by default
+            result[k] = v
+    return result
+
+def _iter_metadata_overrides(config):
+    """Yield (pattern, values) from config metadata overrides.
+
+    Supports these shapes:
+    - metadata_overrides: [{ pattern: "path/glob", values: {...} }, ...]
+    - metadata:            [{ pattern: "...", values: {...} }, ...]
+    - metadata:            { "path/glob": {...}, ... }
+    - metadata:            [{ file|match: "...", merge|values: {...} }]
+    """
+    md = config.get('metadata_overrides') or config.get('metadata')
+    if not md:
+        return
+    if isinstance(md, dict):
+        for pat, vals in md.items():
+            if isinstance(vals, dict):
+                yield pat, vals
+    elif isinstance(md, list):
+        for item in md:
+            if not isinstance(item, dict):
+                continue
+            pattern = item.get('pattern') or item.get('file') or item.get('match')
+            values = item.get('values') or item.get('merge')
+            if not values:
+                # allow inline style: { pattern: "...", title: "...", data_files: [...] }
+                values = {k: v for k, v in item.items() if k not in ('pattern', 'file', 'match')}
+            if pattern and isinstance(values, dict):
+                yield pattern, values
+
+def apply_metadata_overrides(file_path: Path, meta: dict, config: dict) -> dict:
+    """Apply any matching metadata overrides based on relative path glob patterns.
+
+    Returns a new merged metadata dict.
+    """
+    try:
+        rel = file_path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except Exception:
+        rel = file_path.as_posix()
+
+    merged = dict(meta or {})
+    for pattern, values in _iter_metadata_overrides(config) or []:
+        # Support both repo-root relative and section-relative globs
+        if fnmatch.fnmatch(rel, pattern) or fnmatch.fnmatch(file_path.name, pattern):
+            merged = _deep_merge(merged, values)
+    return merged
+
 def create_setup_cells(zip_name, config, install_packages="pandas natural_pdf tqdm", section_folder=None, for_codespaces=False):
     """Create setup cells that work in Colab, Jupyter, etc.
 
@@ -336,6 +395,8 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
         notebook = json.load(f)
 
     metadata = get_notebook_metadata(notebook)
+    # Merge config-provided metadata overrides for this file
+    metadata = apply_metadata_overrides(notebook_path, metadata, config)
     # (No inheritance of section data_files here - section-level zips are created
     # separately in main() and shown on the index page.)
     if not metadata:
@@ -359,6 +420,12 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
     
     # Create exercise version
     exercise_nb = json.loads(json.dumps(complete_nb))  # Deep copy
+
+    # Persist merged workshop metadata back into both notebook variants
+    for nb in (complete_nb, exercise_nb):
+        nb.setdefault('metadata', {})
+        nb['metadata'].setdefault('workshop', {})
+        nb['metadata']['workshop'] = metadata
     
     # Process cells for exercise version
     for i, cell in enumerate(exercise_nb['cells']):
@@ -810,6 +877,8 @@ def process_markdown(markdown_path, output_dir, config, section_cfg=None):
     if not frontmatter:
         print(f"Skipping {markdown_path} - no frontmatter")
         return None
+    # Merge config-provided metadata overrides for this file
+    frontmatter = apply_metadata_overrides(markdown_path, frontmatter, config)
     
     base_name = markdown_path.stem
     markdown_dir = markdown_path.parent
@@ -827,8 +896,14 @@ def process_markdown(markdown_path, output_dir, config, section_cfg=None):
         zip_name = f"{base_name}-data.zip"
         create_data_zip(frontmatter['data_files'], output_subdir / zip_name, markdown_dir)
     
-    # Build the full content with title
-    full_content = f"# {title}\n\n"
+    # Compute relative link back to main index
+    try:
+        index_rel = os.path.relpath((output_dir / 'index.html'), start=output_subdir)
+    except Exception:
+        index_rel = '../index.html'
+
+    # Build the full content with back link and title
+    full_content = f"[← Back to main page]({index_rel})\n\n# {title}\n\n"
     
     # Generate and add table of contents at the top (after title)
     has_useful_links = bool(frontmatter.get('links'))
@@ -988,13 +1063,18 @@ def create_index(notebooks, config, output_dir):
                                    key=lambda x: x.get('name', ''), reverse=True)
         sorted_items = items_with_order + items_without_order
 
+        # Optional section icon prefix for each item link
+        icon_prefix = ''
+        if section_cfg.get('icon'):
+            icon_prefix = f"{section_cfg.get('icon')} "
+
         for item in sorted_items:
             # Make title a link with arrow
             if item.get('type') == 'markdown':
-                notebooks_md.append(f"### [{item['title']} →](./{item['html_file']})\n")
+                notebooks_md.append(f"### {icon_prefix}[{item['title']} →](./{item['html_file']})\n")
             else:
                 colab_url = f"https://colab.research.google.com/github/{github_repo}/blob/{github_branch}/{output_dir_name}/{item['exercise_file']}"
-                notebooks_md.append(f"### [{item['title']} →]({colab_url})\n")
+                notebooks_md.append(f"### {icon_prefix}[{item['title']} →]({colab_url})\n")
             
             if item['description']:
                 notebooks_md.append(f"{item['description']}\n")
@@ -1076,13 +1156,14 @@ def create_index(notebooks, config, output_dir):
         <a href="{codespaces_url}" style="display: inline-block; padding: 12px 24px; background: #238636; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
             ☁️ Create Codespace →
         </a>
+        <!--
         <span style="margin: 0 1em; color: #666;">or</span>
         <a href="{branch_url}" style="display: inline-block; padding: 12px 24px; background: #0969da; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
             📂 View on GitHub
-        </a>
+        </a> -->
     </div>
     <p style="margin-bottom: 0; color: #666; font-size: 0.9em;">
-        Codespaces provides a full VS Code environment in your browser with all dependencies pre-installed
+        GitHub Codespaces provides a full Visual Studio Code environment in your browser with all dependencies pre-installed
     </p>
 </div>
 '''
@@ -1351,12 +1432,56 @@ def create_codespaces_branch(config, commit=False, keep_temp=False):
             except Exception:
                 pass
 
+def commit_and_push_main(config) -> bool:
+    """Commit and push changes on the main (source) branch of the current repo."""
+    try:
+        # Ensure we're in a git repo
+        subprocess.run(['git', 'rev-parse', '--git-dir'], capture_output=True, text=True, check=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("⚠ Not in a git repository. Skipping commit/push on main branch.")
+        return True
+
+    branch = config.get('github_branch', 'main')
+
+    # Stage all changes (docs/, .gitattributes, etc.)
+    try:
+        subprocess.run(['git', 'add', '-A'], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"✗ git add failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+        return False
+
+    # Commit (ignore if nothing to commit)
+    committed = True
+    try:
+        subprocess.run(['git', 'commit', '-m', 'Publish site updates'], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        committed = False
+        if 'nothing to commit' in (e.stderr or '') or 'nothing to commit' in (e.stdout or ''):
+            print("→ No changes to commit on main branch.")
+        else:
+            print(f"✗ git commit failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+            return False
+
+    # Push
+    print(f"\n→ Pushing changes to origin/{branch}...")
+    try:
+        subprocess.run(['git', 'push', 'origin', branch], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"✗ git push failed: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+        return False
+
+    if committed:
+        print("✓ Pushed main branch changes")
+    else:
+        print("✓ Main branch is up to date on remote")
+    return True
+
 def main():
     """Process all notebooks and create data packages."""
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Process notebooks and create workshop materials')
     parser.add_argument('--commit', action='store_true',
-                       help='Automatically commit and push the codespaces branch')
+                       help='Commit and push main branch, and update/push the codespaces branch')
     parser.add_argument('--keep-temp', action='store_true',
                        help='Keep the temporary repo for inspection (for debugging)')
     args = parser.parse_args()
@@ -1471,6 +1596,13 @@ def main():
     # Setup Git LFS for large files if in a git repo
     lfs_threshold = int(config.get('git_lfs_threshold_mb', 80))  # Default 80MB
     setup_git_lfs(output_dir, lfs_threshold)
+
+    # If requested, commit and push main branch changes first
+    if args.commit:
+        main_ok = commit_and_push_main(config)
+        if not main_ok:
+            print("\n❌ Failed to commit/push main branch. Exiting with error.")
+            sys.exit(1)
 
     # Create or update codespaces branch
     result = create_codespaces_branch(config, commit=args.commit, keep_temp=args.keep_temp)

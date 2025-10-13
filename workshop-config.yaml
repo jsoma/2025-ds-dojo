@@ -45,6 +45,8 @@ sections:
         url: "https://littlecolumns.com/learn/python"
       - title: "Data Sources Survey"
         url: "https://docs.google.com/forms/d/e/1FAIpQLScMlXoLuRvLmTUASbEl2K_7Cr2ZBWEcH9rSO4V1x7zm_tklnQ/viewform?usp=header"
+      - title: "A guide to Markdown"
+        url: https://www.markdownguide.org/basic-syntax/
     data_files:
       - 01-python-basics/学内違反データ.csv
       - 01-python-basics/学内違反データ.pdf
@@ -153,3 +155,8 @@ footer:
 external_links:
   workshop_signup: "https://www.nikkeibp.co.jp/seminar/nb/ddojo/"
   short_url: "https://bit.ly/ds-dojo-2025"
+
+metadata:
+  "01-python-basics/intro.ipynb":
+    order: 1
+    description: An empty notebook for you to practice with
