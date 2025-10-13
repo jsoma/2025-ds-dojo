@@ -1234,17 +1234,31 @@ def create_index(notebooks, config, output_dir):
         # Link to open/resume an existing Codespace filtered by repo
         owner_repo_escaped = github_repo.replace('/', '%2F')
         resume_url = f"https://github.com/codespaces?query=repo%3A{owner_repo_escaped}"
+        # Direct link to create a new Codespace for this repo/branch
+        codespaces_url = f"https://codespaces.new/{github_repo}?ref={notebooks_branch}"
         codespaces_button = f'''
 <div style="text-align: center; margin: 2em 0; padding: 1.5em; background: #f6f8fa; border-radius: 8px;">
     <h3 style="margin-top: 0;">🚀 Start Coding in the Cloud</h3>
-    <div style="margin: 1em 0;">
-        <a href="{resume_url}" style="display: inline-block; padding: 12px 24px; background: #6e7781; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
-            ▶️ Open Codespaces
-        </a>
+    <div style="margin: 1em 0; display: flex; flex-direction: column; gap: 0.75em; align-items: stretch;">
+        <!-- Row 1: Open Existing -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1em; flex-wrap: wrap;">
+            <a href="{resume_url}" style="display: inline-block; padding: 14px 24px; background: #0969da; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 1.05em; min-width: 240px; text-align: center;">
+                ▶️ Open Existing
+            </a>
+            <div style="max-width: 460px; color: #666; font-size: 0.9em; text-align: left;">
+                Resume an existing Codespace for this repo, or pick one from your list.
+            </div>
+        </div>
+        <!-- Row 2: Create New -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1em; flex-wrap: wrap;">
+            <a href="{codespaces_url}" style="display: inline-block; padding: 12px 24px; background: #238636; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; min-width: 240px; text-align: center;">
+                ☁️ Create New on {notebooks_branch}
+            </a>
+            <div style="max-width: 460px; color: #666; font-size: 0.9em; text-align: left;">
+                Start a fresh Codespace on the {notebooks_branch} branch (clean environment).
+            </div>
+        </div>
     </div>
-    <p style="margin-bottom: 0; color: #666; font-size: 0.9em;">
-        GitHub Codespaces is a programming environment that lives in the cloud.
-    </p>
 </div>
 '''
 
