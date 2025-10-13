@@ -1191,6 +1191,19 @@ def create_codespaces_branch(config, commit=False):
     print(f"Setting up Codespaces branch: {notebooks_branch}")
     print(f"{'='*60}")
 
+    # Check for uncommitted changes and stash them if needed
+    result = subprocess.run(['git', 'status', '--porcelain'],
+                          capture_output=True, text=True)
+    has_changes = bool(result.stdout.strip())
+    stash_needed = False
+
+    if has_changes and commit:
+        # Stash any uncommitted changes before switching branches
+        print("  → Stashing uncommitted changes...")
+        subprocess.run(['git', 'stash', 'push', '-m', 'publish.py temporary stash'],
+                      capture_output=True, text=True)
+        stash_needed = True
+
     # Get current branch
     result = subprocess.run(['git', 'branch', '--show-current'],
                           capture_output=True, text=True)
@@ -1298,7 +1311,15 @@ def create_codespaces_branch(config, commit=False):
                 # If we failed, try to get back to original branch
                 if current_branch:
                     subprocess.run(f"git checkout {current_branch}", shell=True, capture_output=True)
+                # Restore stashed changes if needed
+                if stash_needed:
+                    subprocess.run(['git', 'stash', 'pop'], capture_output=True, text=True)
                 return
+
+        # Restore stashed changes if needed
+        if stash_needed:
+            print("  → Restoring stashed changes...")
+            subprocess.run(['git', 'stash', 'pop'], capture_output=True, text=True)
 
         print(f"\n✓ Successfully created/updated {notebooks_branch} branch!")
         print(f"✓ Codespaces will use: https://github.com/{config.get('github_repo', 'YOUR_REPO')}/tree/{notebooks_branch}")
