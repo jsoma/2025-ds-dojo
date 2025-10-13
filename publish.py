@@ -1216,6 +1216,7 @@ def create_index(notebooks, config, output_dir):
     margin-right: calc(50% - 50vw);
     background: linear-gradient(120deg, #eef3ff 0%, #f4f9ff 35%, #f8f3ff 70%, #fff6ea 100%);
     border-bottom: 1px solid #e6e8eb;
+    margin-bottom: 2em;
 }
 .hero {
     max-width: 1060px;
@@ -1236,6 +1237,7 @@ h2 {
     padding: 16px 0; /* align with normal content padding */
     background: transparent !important; /* background is drawn by ::before */
     border: none; /* borders drawn by ::before */
+    color: white;
 }
 h2::before {
     content: "";
@@ -1245,7 +1247,7 @@ h2::before {
     width: 100vw; /* paint full-bleed background */
     top: 0;
     bottom: 0;
-    background: linear-gradient(90deg, #7b28c0 0%, #c43fb7 50%, #d86ecc 100%);
+    background: #d86ecc;
     border-top: 1px solid #ead8f1;
     border-bottom: 1px solid #ead8f1;
     z-index: -1;
@@ -1287,7 +1289,7 @@ h2::before {
     .cs-cta .btn {{ display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; min-width: 240px; }}
     .cs-cta .btn-green {{ background: #238636; color: #fff; }}
     .cs-cta .btn-blue {{ background: #0969da; color: #fff; }}
-    .cs-cta .explain {{ max-width: 720px; color: #666; font-size: 0.95em; text-align: left; line-height: 1.6; overflow-wrap: anywhere; word-break: break-word; margin-top: 2px; }}
+    .cs-cta .explain {{ max-width: 720px; font-size: 0.95em; text-align: left; line-height: 1.6; overflow-wrap: anywhere; word-break: break-word; margin-top: 2px; }}
     @media (max-width: 900px) {{ .cs-cta .row {{ grid-template-columns: 1fr; }} .cs-cta .explain {{ text-align: center; }} }}
     </style>
     <h3 style="margin-top: 0;">🚀 Start Coding in the Cloud</h3>
@@ -1297,12 +1299,12 @@ h2::before {
     <!-- Row 1: New Codespaces (left button, right explanation) -->
     <div class="row">
         <a class="btn btn-green" href="{codespaces_url}">☁️ new codespaces</a>
-        <div class="explain">Create a fresh cloud workspace for this course on the <code>{notebooks_branch}</code> branch — nothing to install.</div>
+        <div class="explain">Create a fresh Codespace in the cloud — nothing to set up or install!</div>
     </div>
     <!-- Row 2: Open Existing (left button, right explanation) -->
     <div class="row">
         <a class="btn btn-blue" href="{resume_url}">📂 open existing</a>
-        <div class="explain">If you already have a Codespace for this repo, reopen it and pick up where you left off.</div>
+        <div class="explain">If you already have a Codespace for this course, open it and resume.</div>
     </div>
 </div>
 '''
