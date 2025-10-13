@@ -1177,6 +1177,8 @@ def setup_git_lfs(output_dir, size_threshold_mb=80):
 
 def create_codespaces_branch(config, commit=False):
     """Create or update a codespaces branch with notebooks and data files."""
+    import shutil
+
     notebooks_branch = config.get('notebooks_branch', 'codespaces')
 
     # Check if we're in a git repository
@@ -1191,56 +1193,33 @@ def create_codespaces_branch(config, commit=False):
     print(f"Setting up Codespaces branch: {notebooks_branch}")
     print(f"{'='*60}")
 
-    # Check for uncommitted changes and stash them if needed
-    result = subprocess.run(['git', 'status', '--porcelain'],
-                          capture_output=True, text=True)
-    has_changes = bool(result.stdout.strip())
-    stash_needed = False
-
-    if has_changes and commit:
-        # Stash any uncommitted changes before switching branches
-        print("  → Stashing uncommitted changes...")
-        subprocess.run(['git', 'stash', 'push', '-m', 'publish.py temporary stash'],
-                      capture_output=True, text=True)
-        stash_needed = True
-
     # Get current branch
     result = subprocess.run(['git', 'branch', '--show-current'],
                           capture_output=True, text=True)
     current_branch = result.stdout.strip()
 
-    # Check if notebooks branch exists locally
-    result = subprocess.run(['git', 'branch', '--list', notebooks_branch],
-                          capture_output=True, text=True)
-    branch_exists_locally = bool(result.stdout.strip())
+    # Create a build directory for codespaces content
+    build_dir = Path('build-codespaces')
+    if build_dir.exists():
+        shutil.rmtree(build_dir)
+    build_dir.mkdir()
 
-    # Check if notebooks branch exists on remote
-    result = subprocess.run(['git', 'ls-remote', '--heads', 'origin', notebooks_branch],
-                          capture_output=True, text=True)
-    branch_exists_remote = bool(result.stdout.strip())
+    print("  → Collecting files for codespaces branch...")
 
-    commands = []
+    # 1. Copy all notebooks from docs/ (both exercise and answer versions)
+    notebook_count = 0
+    for notebook in Path('docs').glob('**/*.ipynb'):
+        # Recreate the directory structure
+        rel_path = notebook.relative_to('docs')
+        dest_path = build_dir / rel_path
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(notebook, dest_path)
+        notebook_count += 1
 
-    # Delete local branch if it exists (we'll recreate it clean)
-    if branch_exists_locally:
-        commands.append(f"git branch -D {notebooks_branch}")
+    print(f"    • Collected {notebook_count} notebooks")
 
-    # Delete remote branch if it exists
-    if branch_exists_remote and commit:
-        commands.append(f"git push origin --delete {notebooks_branch}")
-
-    # Create new orphan branch (no history, no files from main)
-    commands.append(f"git checkout --orphan {notebooks_branch}")
-
-    # Remove all files from the index (orphan branch starts with everything staged)
-    commands.append("git rm -rf . 2>/dev/null || true")
-
-    # Files to include in codespaces branch
-    files_to_add = []
-    all_data_files = set()  # Track all data files needed by notebooks
-
-    # First pass: collect all notebooks and their required data files
-    sections = config.get('sections', [])
+    # 2. Copy data files needed by notebooks
+    data_count = 0
     for section in sections:
         if isinstance(section, dict):
             folder = section.get('folder')
@@ -1248,125 +1227,111 @@ def create_codespaces_branch(config, commit=False):
             folder = section
 
         if folder and Path(folder).exists():
-            # Add notebooks and collect their data requirements
+            # Read source notebooks to get their data requirements
             for notebook_path in Path(folder).glob('*.ipynb'):
                 if '.ipynb_checkpoints' not in str(notebook_path):
-                    files_to_add.append(str(notebook_path))
-
-                    # Read notebook to get its data files
                     try:
                         with open(notebook_path, 'r') as f:
                             notebook = json.load(f)
                             metadata = notebook.get('metadata', {}).get('workshop', {})
                             data_patterns = metadata.get('data_files', [])
 
-                            # Collect data files referenced by this notebook
+                            # Copy data files referenced by this notebook
                             for pattern in data_patterns:
                                 for data_file in Path(folder).glob(pattern):
                                     if data_file.is_file():
-                                        all_data_files.add(str(data_file))
+                                        # Copy to build dir maintaining structure
+                                        dest = build_dir / folder / data_file.name
+                                        dest.parent.mkdir(parents=True, exist_ok=True)
+                                        shutil.copy2(data_file, dest)
+                                        data_count += 1
                     except Exception:
-                        pass  # Skip if notebook can't be read
+                        pass
 
-            # Add CSV and Excel files that are in the folder (likely data files)
+            # Also copy all CSV and Excel files from each section
             for pattern in ['*.csv', '*.xlsx', '*.xls']:
                 for data_file in Path(folder).glob(pattern):
                     if data_file.is_file():
-                        all_data_files.add(str(data_file))
+                        dest = build_dir / folder / data_file.name
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        if not dest.exists():  # Don't copy duplicates
+                            shutil.copy2(data_file, dest)
+                            data_count += 1
 
-    # Add all collected data files
-    files_to_add.extend(sorted(all_data_files))
+    print(f"    • Collected {data_count} data files")
 
-    # Add requirements file if it exists
-    for req_file in ['requirements.txt', 'requirements.in']:
-        if Path(req_file).exists():
-            files_to_add.append(req_file)
+    # 3. Copy other essential files
+    # requirements.txt
+    if Path('requirements.txt').exists():
+        shutil.copy2('requirements.txt', build_dir / 'requirements.txt')
+        print("    • Added requirements.txt")
 
-    # Copy _devcontainer-template to .devcontainer in the codespaces branch
-    devcontainer_commands = []
+    # index.md
+    if Path('index.md').exists():
+        shutil.copy2('index.md', build_dir / 'index.md')
+        print("    • Added index.md")
+
+    # devcontainer
     if Path('_devcontainer-template').exists():
-        # In orphan branch, we need to copy from main branch
-        devcontainer_commands.append("mkdir -p .devcontainer")
-        devcontainer_commands.append(f"git show {current_branch}:_devcontainer-template/devcontainer.json > .devcontainer/devcontainer.json")
+        devcontainer_dir = build_dir / '.devcontainer'
+        devcontainer_dir.mkdir()
+        shutil.copy2('_devcontainer-template/devcontainer.json',
+                    devcontainer_dir / 'devcontainer.json')
+        print("    • Added .devcontainer")
 
-    # Add README or index.md if they exist
-    for readme in ['README.md', 'index.md']:
-        if Path(readme).exists():
-            files_to_add.append(readme)
+    # Now create the orphan branch with the build directory contents
+    print("\n  → Creating codespaces branch...")
 
-    if files_to_add:
-        # Get unique directories that need to be created
-        directories = set()
-        for file in files_to_add:
-            if file != '.devcontainer/':  # Skip, handled separately
-                file_path = Path(file)
-                if file_path.parent != Path('.'):
-                    directories.add(str(file_path.parent))
+    # Commands to execute
+    commands = []
 
-        # Create all necessary directories
-        if directories:
-            commands.append(f"mkdir -p {' '.join(sorted(directories))}")
+    # Check and delete existing branch
+    result = subprocess.run(['git', 'branch', '--list', notebooks_branch],
+                          capture_output=True, text=True)
+    if result.stdout.strip():
+        commands.append(f"git branch -D {notebooks_branch}")
 
-        # Copy files from main branch to the orphan branch
-        for file in files_to_add:
-            if file == '.devcontainer/':
-                # Skip this, handled by devcontainer_commands
-                continue
-            # Copy the file from main branch
-            if ' ' in file:
-                commands.append(f'git show {current_branch}:"{file}" > "{file}"')
-            else:
-                commands.append(f"git show {current_branch}:{file} > {file}")
-
-        # Add the devcontainer copy command if needed
-        commands.extend(devcontainer_commands)
-
-        # Add all files to git
-        commands.append("git add .")
-        commands.append(f'git commit -m "Create {notebooks_branch} branch with notebooks and data files"')
-        commands.append(f"git push -u origin {notebooks_branch}")
-
-    # Switch back to original branch
+    # Create orphan branch
+    commands.append(f"git checkout --orphan {notebooks_branch}")
+    commands.append("git rm -rf .")
+    commands.append(f"cp -r {build_dir}/* .")
+    commands.append(f"cp -r {build_dir}/.devcontainer .")
+    commands.append("git add .")
+    commands.append(f'git commit -m "Update {notebooks_branch} branch with notebooks and data"')
+    commands.append(f"git push -f origin {notebooks_branch}")
     commands.append(f"git checkout {current_branch}")
-
-    # Clean up .devcontainer from main branch if it was created
-    if Path('_devcontainer-template').exists():
-        commands.append("rm -rf .devcontainer")
+    commands.append(f"rm -rf {build_dir}")
 
     if commit:
-        print("\nExecuting git commands...")
+        print("\n  → Executing git commands...")
         for cmd in commands:
-            print(f"  → {cmd}")
+            print(f"    • {cmd}")
             try:
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
-                if result.stdout:
-                    print(f"    {result.stdout.strip()}")
+                if result.stderr and 'warning' not in result.stderr.lower():
+                    print(f"      ⚠ {result.stderr.strip()}")
             except subprocess.CalledProcessError as e:
-                print(f"    ⚠ Error: {e.stderr.strip() if e.stderr else str(e)}")
-                # If we failed, try to get back to original branch
-                if current_branch:
-                    subprocess.run(f"git checkout {current_branch}", shell=True, capture_output=True)
-                # Restore stashed changes if needed
-                if stash_needed:
-                    subprocess.run(['git', 'stash', 'pop'], capture_output=True, text=True)
-                return
+                print(f"      ✗ Error: {e.stderr.strip() if e.stderr else str(e)}")
+                # Try to get back to original branch
+                subprocess.run(f"git checkout {current_branch}", shell=True, capture_output=True)
+                subprocess.run(f"rm -rf {build_dir}", shell=True, capture_output=True)
+                return False
 
-        # Restore stashed changes if needed
-        if stash_needed:
-            print("  → Restoring stashed changes...")
-            subprocess.run(['git', 'stash', 'pop'], capture_output=True, text=True)
-
-        print(f"\n✓ Successfully created/updated {notebooks_branch} branch!")
-        print(f"✓ Codespaces will use: https://github.com/{config.get('github_repo', 'YOUR_REPO')}/tree/{notebooks_branch}")
+        print(f"\n✓ Successfully created {notebooks_branch} branch!")
+        print(f"✓ Codespaces URL: https://codespaces.new/{config.get('github_repo', 'USER/REPO')}?ref={notebooks_branch}")
     else:
-        print("\nTo create the codespaces branch, run these commands:")
-        print("-" * 60)
+        print("\n  → To create the codespaces branch, run these commands:")
+        print("  " + "-" * 56)
         for cmd in commands:
-            print(cmd)
-        print("-" * 60)
-        print("\nOr run: python publish.py --commit")
+            print(f"  {cmd}")
+        print("  " + "-" * 56)
+        print("\n  Or run: python publish.py --commit")
 
-    return commands
+    # Clean up build directory if not committing
+    if not commit and build_dir.exists():
+        shutil.rmtree(build_dir)
+
+    return True
 
 def main():
     """Process all notebooks and create data packages."""
