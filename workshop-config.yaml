@@ -40,11 +40,11 @@ sections:
     slides: 01-python-basics/data-dojo-intro.pptx  # Will auto-convert to PDF
     links:
       - title: "Welcome Survey"
-        url: "https://docs.google.com/forms/d/e/1FAIpQLScPvh9uIHWClCkITyMOGWsb5gWOX0QAAjkLF88p53UDpnIopw/viewform"
+        url: "https://docs.google.com/forms/d/e/1FAIpQLSd6XdmBIu08J5iTvmZRDwmy9XCbTDLidQUeWW6lsXpW1m1EBA/viewform?usp=header"
       - title: "Python's Not (Just) For Unicorns"
         url: "https://littlecolumns.com/learn/python"
-      - title: "Homework 1 Data Sources Survey"
-        url: "https://docs.google.com/forms/d/e/1FAIpQLSeESNZJkuUXLg2W7Uf-FROW1VCZflwMGr3Dib8yPT4rvLWoSw/viewform"
+      - title: "Data Sources Survey"
+        url: "https://docs.google.com/forms/d/e/1FAIpQLScMlXoLuRvLmTUASbEl2K_7Cr2ZBWEcH9rSO4V1x7zm_tklnQ/viewform?usp=header"
     data_files:
       - 01-python-basics/学内違反データ.csv
       - 01-python-basics/学内違反データ.pdf
@@ -57,8 +57,9 @@ sections:
     description: "Working with structured data using pandas: loading, cleaning, analyzing, and transforming datasets"
     slides: 02-pandas/structured-data.pdf  # Use existing PDF
     data_files:
-      - "*.csv"
-      - "*.xlsx"
+      - "02-pandas/*.csv"
+      - "02-pandas/*.xlsx"
+    draft: true
 
   # Day 2 - Tuesday Afternoon
   - folder: 03-apis
