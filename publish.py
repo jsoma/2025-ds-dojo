@@ -1285,8 +1285,9 @@ def create_codespaces_branch(config, commit=False):
     # Copy _devcontainer-template to .devcontainer in the codespaces branch
     devcontainer_commands = []
     if Path('_devcontainer-template').exists():
-        devcontainer_commands.append("cp -r _devcontainer-template .devcontainer")
-        files_to_add.append('.devcontainer/')
+        # In orphan branch, we need to copy from main branch
+        devcontainer_commands.append("mkdir -p .devcontainer")
+        devcontainer_commands.append(f"git show {current_branch}:_devcontainer-template/devcontainer.json > .devcontainer/devcontainer.json")
 
     # Add README or index.md if they exist
     for readme in ['README.md', 'index.md']:
