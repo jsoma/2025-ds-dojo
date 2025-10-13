@@ -1225,12 +1225,21 @@ def create_index(notebooks, config, output_dir):
 }
 .hero h1 { margin: 0 0 0.4em; font-size: 2.4em; }
 .hero .subtitle { margin: 0 auto; max-width: 980px; color: #4a4a4a; font-size: 1.1em; }
+
+/* Full-bleed H2 (index only) */
 h2 {
-    font-size: 2em;
-    padding: 0 2em;
-    background: #d86ecc;
-    color: white;
-    
+    position: static !important; /* override sticky from base styles */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: 2.4em;
+    margin-bottom: 0.9em;
+    padding: 16px clamp(16px, 4vw, 32px);
+    background: linear-gradient(90deg, #7b28c0 0%, #c43fb7 50%, #d86ecc 100%);
+    color: #fff;
+    border-top: 1px solid #ead8f1;
+    border-bottom: 1px solid #ead8f1;
+    box-sizing: border-box;
 }
 </style>
 
