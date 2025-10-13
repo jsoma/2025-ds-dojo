@@ -461,12 +461,12 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Copy any referenced files (PDFs, images) to output
-    find_and_copy_referenced_files(notebook, notebook_dir, output_dir)
-    
     # Create output subdirectory matching the source structure
     output_subdir = output_dir / notebook_dir.name
     output_subdir.mkdir(parents=True, exist_ok=True)
+
+    # Copy any referenced files (PDFs, images) to the section output subdir
+    find_and_copy_referenced_files(notebook, notebook_dir, output_subdir)
 
     # Handle slides if specified (item-specific or section-level)
     slide_file = metadata.get('slides')
@@ -875,8 +875,8 @@ def process_markdown(markdown_path, output_dir, config, section_cfg=None):
 
     frontmatter, markdown_content = extract_markdown_frontmatter(content)
     if not frontmatter:
-        print(f"Skipping {markdown_path} - no frontmatter")
-        return None
+        # Proceed with empty frontmatter to allow config overrides to apply
+        frontmatter = {}
     # Merge config-provided metadata overrides for this file
     frontmatter = apply_metadata_overrides(markdown_path, frontmatter, config)
     
@@ -1036,9 +1036,14 @@ def create_index(notebooks, config, output_dir):
         # Add section slides if available
         section_cfg = section_configs.get(section, {})
         if section_cfg.get('slides'):
-            # Get the first item's folder to determine the section directory
-            section_dir = Path(section_items[0]['section_folder']) if section_items else Path('.')
-            section_folder = section_dir.name if section_items else None
+            # Determine the section directory even if there are no items
+            if section_items:
+                section_dir = Path(section_items[0]['section_folder'])
+                section_folder = section_dir.name
+            else:
+                cfg_folder = section_cfg.get('folder', '')
+                section_dir = Path(cfg_folder) if cfg_folder else Path('.')
+                section_folder = section_dir.name if cfg_folder else None
             slide_html = generate_slide_embed(section_cfg['slides'], section_dir.parent, Path(config.get('output_dir', 'docs')), 'index', section_folder=section_folder)
             notebooks_md.append('\n' + slide_html + '\n')
 
@@ -1442,6 +1447,22 @@ def commit_and_push_main(config) -> bool:
         return True
 
     branch = config.get('github_branch', 'main')
+    # Determine current branch
+    try:
+        cur = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, text=True, check=True)
+        current_branch = (cur.stdout or '').strip()
+    except subprocess.CalledProcessError:
+        current_branch = ''
+
+    switched = False
+    if current_branch and current_branch != branch:
+        print(f"→ Switching from {current_branch} to {branch} to commit site changes...")
+        try:
+            subprocess.run(['git', 'switch', branch], check=True, capture_output=True, text=True)
+            switched = True
+        except subprocess.CalledProcessError as e:
+            print(f"✗ Failed to switch to {branch}: {e.stderr.strip() if e.stderr else e.stdout.strip()}")
+            return False
 
     # Stage all changes (docs/, .gitattributes, etc.)
     try:
@@ -1474,6 +1495,15 @@ def commit_and_push_main(config) -> bool:
         print("✓ Pushed main branch changes")
     else:
         print("✓ Main branch is up to date on remote")
+
+    # Switch back to original branch if we switched
+    if switched and current_branch:
+        try:
+            subprocess.run(['git', 'switch', current_branch], check=True, capture_output=True, text=True)
+            print(f"→ Switched back to {current_branch}")
+        except subprocess.CalledProcessError:
+            # Non-fatal; user can switch manually if needed
+            pass
     return True
 
 def main():
