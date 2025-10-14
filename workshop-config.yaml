@@ -47,6 +47,8 @@ sections:
         url: "https://docs.google.com/forms/d/e/1FAIpQLScMlXoLuRvLmTUASbEl2K_7Cr2ZBWEcH9rSO4V1x7zm_tklnQ/viewform?usp=header"
       - title: "A guide to Markdown"
         url: https://www.markdownguide.org/basic-syntax/
+      - title: "Character encoding presentation"
+        url: https://jonathansoma.com/projects/charsets/
     data_files:
       - 01-python-basics/学内違反データ.csv
       - 01-python-basics/学内違反データ.pdf
