@@ -846,6 +846,74 @@ def prepare_codespaces_build(config) -> Path | None:
             )
             copied_any = True
             print(f"  → Copied section: {folder}")
+
+            # After copying, generate worksheet and -ANSWERS variants for notebooks
+            for nb_path in dest.rglob('*.ipynb'):
+                # Skip already-generated -ANSWERS notebooks if any
+                if nb_path.name.endswith('-ANSWERS.ipynb'):
+                    continue
+                try:
+                    with open(nb_path, 'r', encoding='utf-8') as f:
+                        nb = json.load(f)
+                except Exception as e:
+                    print(f"    ⚠ Skipping {nb_path.name}: could not read notebook ({e})")
+                    continue
+
+                # Helpers
+                def _ensure_kernelspec(n):
+                    try:
+                        n.setdefault('metadata', {})
+                        n['metadata'].setdefault('kernelspec', {})
+                        ks = n['metadata']['kernelspec']
+                        ks['name'] = 'python3'
+                        ks['display_name'] = 'Python 3'
+                        ks['language'] = 'python'
+                    except Exception:
+                        pass
+
+                def _clear_outputs(n):
+                    for cell in n.get('cells', []):
+                        if cell.get('cell_type') == 'code':
+                            cell['outputs'] = []
+                            cell['execution_count'] = None
+                    return n
+
+                # Create ANSWERS version: keep all code, just clear outputs
+                try:
+                    import copy
+                    answers_nb = copy.deepcopy(nb)
+                    _ensure_kernelspec(answers_nb)
+                    _clear_outputs(answers_nb)
+                    answers_path = nb_path.with_name(nb_path.stem + '-ANSWERS.ipynb')
+                    with open(answers_path, 'w', encoding='utf-8') as f:
+                        json.dump(answers_nb, f, indent=1)
+                    print(f"    ✓ Wrote {answers_path.relative_to(build_dir)}")
+                except Exception as e:
+                    print(f"    ⚠ Failed to write ANSWERS for {nb_path.name}: {e}")
+
+                # Create worksheet version: clear outputs and blank out 'solution'-tagged cells
+                try:
+                    import copy
+                    exercise_nb = copy.deepcopy(nb)
+                    _ensure_kernelspec(exercise_nb)
+                    _clear_outputs(exercise_nb)
+                    for i, cell in enumerate(exercise_nb.get('cells', [])):
+                        tags = (cell.get('metadata', {}) or {}).get('tags', [])
+                        if tags and 'solution' in tags and cell.get('cell_type') == 'code':
+                            exercise_nb['cells'][i] = {
+                                "cell_type": "code",
+                                "metadata": {},
+                                "source": [],
+                                "execution_count": None,
+                                "outputs": []
+                            }
+                    # Overwrite the original path with the worksheet
+                    with open(nb_path, 'w', encoding='utf-8') as f:
+                        json.dump(exercise_nb, f, indent=1)
+                    print(f"    ✓ Updated worksheet {nb_path.relative_to(build_dir)}")
+                except Exception as e:
+                    print(f"    ⚠ Failed to write worksheet for {nb_path.name}: {e}")
+
         except Exception as e:
             print(f"  ⚠ Failed to copy section {folder}: {e}")
 
