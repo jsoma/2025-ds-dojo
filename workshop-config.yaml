@@ -59,24 +59,24 @@ sections:
   - folder: 02-pandas
     title: "Data Analysis with Pandas"
     description: "Working with structured data using pandas: loading, cleaning, analyzing, and transforming datasets"
-    slides: 02-pandas/structured-data.pdf  # Use existing PDF
+    slides: structured-data.pptx
     data_files:
       - "02-pandas/*.csv"
       - "02-pandas/*.xlsx"
-    draft: true
+    draft: false
 
   # Day 2 - Tuesday Afternoon
   - folder: 03-apis
     title: "Working with APIs"
     description: "Accessing data from web APIs programmatically, handling JSON responses, and paginated results"
-    slides: 03-apis/nikkei-apis.pptx  # 21MB PPTX
+    slides: structured-data.pptx
     api_keys_url: "https://bit.ly/nikkei-api-keys-2025"
     links:
       - title: "Inspect Element - Undocumented APIs"
         url: "https://inspectelement.org/"
       - title: "Using Paginated APIs (Video)"
         url: "https://www.youtube.com/watch?v=4Fdyft-ky0w"
-    draft: true
+    draft: false
 
   # Day 3 - Wednesday
   - folder: 04-scraping
