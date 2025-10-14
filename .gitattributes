@@ -8,7 +8,7 @@ docs/05-ai/03-dojo-practical-ai.pdf filter=lfs diff=lfs merge=lfs -text
 *.pptx filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
 **/03-dojo-practical-ai.pdf filter=lfs diff=lfs merge=lfs -text
-
 # IMPORTANT: Do not use LFS for published site assets so GitHub Pages serves real files
 # Later rules override earlier ones; this disables LFS filters under docs/
 docs/** -filter -diff -merge
+structured-data.pptx filter=lfs diff=lfs merge=lfs -text

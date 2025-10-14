@@ -63,8 +63,19 @@ sections:
     data_files:
       - "02-pandas/*.csv"
       - "02-pandas/*.xlsx"
-    draft: false
-
+    links:
+      - title: Gemini (Deep Research)
+        url: "https://gemini.google/overview/deep-research/"
+      - title: ChatGPT (turn on Deep Research)
+        url: "https://chatgpt.com/"
+      - title: Claude (turn on Research)
+        url: "https://claude.ai/"
+      - title: My restaurant data report (Google Gemini)
+        url: https://g.co/gemini/share/cae3a2a8f5bd
+      - title: My restaurant data report (Claude)
+        url: https://claude.ai/public/artifacts/a76aabb6-6d06-47ed-9f21-6e0652f01d58
+      - title: My restaurant data report (ChatGPT)
+        url: https://chatgpt.com/s/dr_68eee03093c88191a2c0b21e5c0e50d7
   # Day 2 - Tuesday Afternoon
   - folder: 03-apis
     title: "Working with APIs"
