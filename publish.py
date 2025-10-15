@@ -1140,6 +1140,10 @@ def create_index(notebooks, config, output_dir):
     
     # Build notebooks markdown
     notebooks_md = []
+
+    # Helper to extract a display title from link dicts that may use 'title' or 'name'
+    def _link_title(link):
+        return link.get('title') or link.get('name') or 'Link'
     
     # Handle root-level content (slides, data_files, links)
     if config.get('slides') or config.get('data_files') or config.get('links'):
@@ -1158,7 +1162,7 @@ def create_index(notebooks, config, output_dir):
         if config.get('links'):
             notebooks_md.append('## Useful Links\n\n')
             for link in config['links']:
-                name = link.get('name', 'Link')
+                name = _link_title(link)
                 url = link.get('url', '#')
                 desc = link.get('description', '')
                 if desc:
@@ -1212,6 +1216,20 @@ def create_index(notebooks, config, output_dir):
             if sec_folder:
                 zip_name = f"{Path(sec_folder).name}-data.zip"
                 notebooks_md.append(f"\n<div class=\"download-box\">\n<strong>Section files:</strong> <a href=\"./{sec_folder}/{zip_name}\">📦 {zip_name}</a>\n</div>\n\n")
+
+        # If the section declares links, render them similar to root-level links
+        if section_cfg.get('links'):
+            notebooks_md.append('\n**Useful Links for this section:**\n\n')
+            notebooks_md.append('<ul>')
+            for link in section_cfg['links']:
+                name = _link_title(link)
+                url = link.get('url', '#')
+                desc = link.get('description', '')
+                if desc:
+                    notebooks_md.append(f'<li><a href="{url}">{name}</a> {desc}</li>\n')
+                else:
+                    notebooks_md.append(f'<li><a href="{url}">{name}</a></li>\n')
+            notebooks_md.append('</ul>\n\n')
 
         # Sort items: first by those with order (ascending), then by filename (descending)
         def sort_key(item):

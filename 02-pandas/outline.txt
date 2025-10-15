@@ -4,7 +4,7 @@
 3. Let's look at...
     - Variables
     - Running code vs code existing
-    - Printing vs not printing
+    - Printing vs not printing, and The Last Line
 4. Functions and methods
     - .upper()
     - .reverse()
@@ -13,5 +13,8 @@
     - imports (stats)
 5. pandas basics
     - import
+    - dataframe
     - df.head()
-    
+    - ask ChatGPT, see what it does
+        - print(df.head()) vs df.head()
+6. 

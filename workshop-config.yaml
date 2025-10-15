@@ -64,6 +64,8 @@ sections:
       - "02-pandas/*.csv"
       - "02-pandas/*.xlsx"
     links:
+      - title: Tokyo Open Data
+        url: https://portal.data.metro.tokyo.lg.jp/
       - title: Gemini (Deep Research)
         url: "https://gemini.google/overview/deep-research/"
       - title: ChatGPT (turn on Deep Research)
