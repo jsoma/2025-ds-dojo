@@ -175,3 +175,45 @@ metadata:
   "01-python-basics/intro.ipynb":
     order: 1
     description: An empty notebook for you to practice with
+  
+  # --- Installing packages per notebook/section ---
+  # You can control which packages are installed at the top of notebooks by
+  # adding either 'install' (string or list) or 'packages' (alias of install)
+  # under the metadata key. Globs are supported, e.g. "03-apis/*.ipynb".
+  #
+  # Example shapes:
+  #   "path/to/notebook.ipynb":
+  #     install: pandas
+  #   "path/to/notebook.ipynb":
+  #     install: [pandas, requests]
+  #   "03-apis/*.ipynb":
+  #     packages: [requests, pandas]
+  #
+  # The cell is injected at the top of both published docs notebooks and the
+  # Codespaces worksheets. If nothing is specified, no installs are added.
+  # Pattern-based installs for targeted notebooks/sections
+  # Use either 'packages' (alias) or 'install'. These drive %pip install cells
+  # injected at the top of notebooks when publishing and in Codespaces worksheets.
+  "02-pandas/*.ipynb":
+    packages:
+      - pandas
+  "03-apis/*.ipynb":
+    packages:
+      - pandas
+      - requests
+  "04-scraping/*.ipynb":
+    packages:
+      - pandas
+      - requests
+      - playwright
+  "05-ai/*.ipynb":
+    packages:
+      - openai
+      - instructor
+      - tqdm
+      - pydantic
+  "06-visualization/*.ipynb":
+    packages:
+      - matplotlib
+      - seaborn
+      - pandas
