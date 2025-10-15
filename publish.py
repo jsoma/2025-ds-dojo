@@ -299,6 +299,12 @@ def apply_metadata_overrides(file_path: Path, meta: dict, config: dict) -> dict:
         # Support both repo-root relative and section-relative globs
         if fnmatch.fnmatch(rel, pattern) or fnmatch.fnmatch(file_path.name, pattern):
             merged = _deep_merge(merged, values)
+    # Allow 'packages' as an alias for 'install'
+    try:
+        if 'install' not in merged and isinstance(merged.get('packages'), (list, str)):
+            merged['install'] = merged['packages']
+    except Exception:
+        pass
     return merged
 
 def create_setup_cells(zip_name, config, install_packages="pandas natural_pdf tqdm", section_folder=None, for_codespaces=False):
@@ -392,6 +398,9 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
     metadata = get_notebook_metadata(notebook)
     # Merge config-provided metadata overrides for this file
     metadata = apply_metadata_overrides(notebook_path, metadata, config)
+    # Support 'packages' alias in raw notebook metadata
+    if 'install' not in metadata and isinstance(metadata.get('packages'), (list, str)):
+        metadata['install'] = metadata['packages']
     # (No inheritance of section data_files here - section-level zips are created
     # separately in main() and shown on the index page.)
     if not metadata:
@@ -439,13 +448,15 @@ def process_notebook(notebook_path, output_dir, config, section_cfg=None):
                 "outputs": []
             }
     
-    # Add setup cells if data files or install packages are specified
-    # (Skip for Codespaces branch)
+    # Add setup cells if data files and/or install packages are specified
+    # Only add install cell when 'install' is explicitly provided (no defaults)
     setup_cells = []  # Initialize empty list
     if metadata.get('data_files') or metadata.get('install'):
         zip_name = f"{base_name}-data.zip" if metadata.get('data_files') else None
-        install_packages = metadata.get('install', 'pandas natural_pdf tqdm')
-        setup_cells = create_setup_cells(zip_name, config, install_packages, section_folder=notebook_dir.name)
+        install_packages = metadata.get('install')  # Only if explicitly set
+        # create_setup_cells allows str or list for install_packages; use empty string if None
+        install_arg = install_packages if install_packages is not None else ""
+        setup_cells = create_setup_cells(zip_name, config, install_arg, section_folder=notebook_dir.name)
 
         # Insert setup cells at the beginning (in reverse order to maintain order)
         for cell in reversed(setup_cells):
@@ -897,6 +908,47 @@ def prepare_codespaces_build(config) -> Path | None:
                     exercise_nb = copy.deepcopy(nb)
                     _ensure_kernelspec(exercise_nb)
                     _clear_outputs(exercise_nb)
+                    # Inject top install cell if metadata overrides specify it
+                    try:
+                        # Derive relative path from project root
+                        rel_source = (src / nb_path.name).resolve()
+                        # Build a faux path relative to cwd to reuse apply_metadata_overrides
+                        # Here we reconstruct the original path: folder/name.ipynb
+                        original_rel = Path(folder) / nb_path.name
+                        # Extract existing workshop metadata
+                        workshop_meta = (exercise_nb.get('metadata', {}) or {}).get('workshop', {})
+                        merged_meta = apply_metadata_overrides(original_rel, workshop_meta, config)
+                        # Alias
+                        if 'install' not in merged_meta and isinstance(merged_meta.get('packages'), (list, str)):
+                            merged_meta['install'] = merged_meta['packages']
+                        install_pkgs = merged_meta.get('install')
+                        if install_pkgs:
+                            # Build install cell content
+                            if isinstance(install_pkgs, str):
+                                pkgs = install_pkgs.split()
+                            else:
+                                pkgs = install_pkgs
+                            if pkgs:
+                                lines = ["# Install required packages in Codespaces\n"]
+                                for p in pkgs:
+                                    if p and isinstance(p, str):
+                                        lines.append(f"%pip install --upgrade --quiet {p.strip()}\n")
+                                # Only add if not already present
+                                needs_insert = True
+                                for c in exercise_nb.get('cells', [])[:2]:
+                                    if c.get('cell_type') == 'code' and any('%pip install' in ''.join(c.get('source', [])) for _ in [0]):
+                                        needs_insert = False
+                                        break
+                                if needs_insert:
+                                    exercise_nb['cells'].insert(0, {
+                                        "cell_type": "code",
+                                        "metadata": {},
+                                        "source": lines,
+                                        "execution_count": None,
+                                        "outputs": []
+                                    })
+                    except Exception as e:
+                        print(f"    ⚠ Could not add install cell to {nb_path.name}: {e}")
                     for i, cell in enumerate(exercise_nb.get('cells', [])):
                         tags = (cell.get('metadata', {}) or {}).get('tags', [])
                         if tags and 'solution' in tags and cell.get('cell_type') == 'code':
