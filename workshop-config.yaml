@@ -66,6 +66,8 @@ sections:
     links:
       - title: Tokyo Open Data
         url: https://portal.data.metro.tokyo.lg.jp/
+      - title: Datawrapper
+        url: https://datawrapper.de/
       - title: Gemini (Deep Research)
         url: "https://gemini.google/overview/deep-research/"
       - title: ChatGPT (turn on Deep Research)
