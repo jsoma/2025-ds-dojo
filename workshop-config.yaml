@@ -201,19 +201,28 @@ metadata:
     packages:
       - pandas
       - requests
+      - matplotlib
+      - altair
   "04-scraping/*.ipynb":
     packages:
       - pandas
       - requests
       - playwright
+      - matplotlib
+      - altair
+      - beautifulsoup
   "05-ai/*.ipynb":
     packages:
       - openai
       - instructor
       - tqdm
       - pydantic
+      - matplotlib
+      - altair
   "06-visualization/*.ipynb":
     packages:
       - matplotlib
       - seaborn
       - pandas
+      - matplotlib
+      - altair
