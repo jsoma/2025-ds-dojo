@@ -895,6 +895,46 @@ def prepare_codespaces_build(config) -> Path | None:
                     answers_nb = copy.deepcopy(nb)
                     _ensure_kernelspec(answers_nb)
                     _clear_outputs(answers_nb)
+
+                    # Apply metadata overrides and add install cell to ANSWERS notebook too
+                    try:
+                        # Build a faux path relative to cwd to reuse apply_metadata_overrides
+                        original_rel = Path(folder) / nb_path.name
+                        # Extract existing workshop metadata
+                        workshop_meta = (answers_nb.get('metadata', {}) or {}).get('workshop', {})
+                        merged_meta = apply_metadata_overrides(original_rel, workshop_meta, config)
+                        # Alias
+                        if 'install' not in merged_meta and isinstance(merged_meta.get('packages'), (list, str)):
+                            merged_meta['install'] = merged_meta['packages']
+                        install_pkgs = merged_meta.get('install')
+                        if install_pkgs:
+                            # Build install cell content
+                            if isinstance(install_pkgs, str):
+                                pkgs = install_pkgs.split()
+                            else:
+                                pkgs = install_pkgs
+                            if pkgs:
+                                lines = ["# Install required packages in Codespaces\n"]
+                                for p in pkgs:
+                                    if p and isinstance(p, str):
+                                        lines.append(f"%pip install --upgrade --quiet {p.strip()}\n")
+                                # Only add if not already present
+                                needs_insert = True
+                                for c in answers_nb.get('cells', [])[:2]:
+                                    if c.get('cell_type') == 'code' and any('%pip install' in ''.join(c.get('source', [])) for _ in [0]):
+                                        needs_insert = False
+                                        break
+                                if needs_insert:
+                                    answers_nb['cells'].insert(0, {
+                                        "cell_type": "code",
+                                        "metadata": {},
+                                        "source": lines,
+                                        "execution_count": None,
+                                        "outputs": []
+                                    })
+                    except Exception as e:
+                        print(f"    ⚠ Could not add install cell to ANSWERS {nb_path.name}: {e}")
+
                     answers_path = nb_path.with_name(nb_path.stem + '-ANSWERS.ipynb')
                     with open(answers_path, 'w', encoding='utf-8') as f:
                         json.dump(answers_nb, f, indent=1)
