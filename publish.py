@@ -333,10 +333,12 @@ def create_setup_cells(zip_name, config, install_packages="pandas natural_pdf tq
         else:
             packages = []
 
-        # Install each package separately using %pip
-        for package in packages:
-            if package.strip():  # Only if package name is not empty
-                install_lines.append(f"%pip install --upgrade --quiet {package.strip()}\n")
+        # Install all packages in a single line using %pip
+        if packages:
+            # Filter out empty package names and join them
+            valid_packages = [p.strip() for p in packages if p.strip()]
+            if valid_packages:
+                install_lines.append(f"%pip install --quiet {' '.join(valid_packages)}\n")
 
         if packages:
             cells.append({
@@ -915,9 +917,10 @@ def prepare_codespaces_build(config) -> Path | None:
                                 pkgs = install_pkgs
                             if pkgs:
                                 lines = ["# Install required packages in Codespaces\n"]
-                                for p in pkgs:
-                                    if p and isinstance(p, str):
-                                        lines.append(f"%pip install --upgrade --quiet {p.strip()}\n")
+                                # Install all packages in a single line
+                                valid_packages = [p.strip() for p in pkgs if p and isinstance(p, str) and p.strip()]
+                                if valid_packages:
+                                    lines.append(f"%pip install --quiet {' '.join(valid_packages)}\n")
                                 # Only add if not already present
                                 needs_insert = True
                                 for c in answers_nb.get('cells', [])[:2]:
@@ -970,9 +973,10 @@ def prepare_codespaces_build(config) -> Path | None:
                                 pkgs = install_pkgs
                             if pkgs:
                                 lines = ["# Install required packages in Codespaces\n"]
-                                for p in pkgs:
-                                    if p and isinstance(p, str):
-                                        lines.append(f"%pip install --upgrade --quiet {p.strip()}\n")
+                                # Install all packages in a single line
+                                valid_packages = [p.strip() for p in pkgs if p and isinstance(p, str) and p.strip()]
+                                if valid_packages:
+                                    lines.append(f"%pip install --quiet {' '.join(valid_packages)}\n")
                                 # Only add if not already present
                                 needs_insert = True
                                 for c in exercise_nb.get('cells', [])[:2]:
