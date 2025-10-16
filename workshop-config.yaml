@@ -118,7 +118,6 @@ sections:
         url: "https://huggingface.co/spaces/Xenova/whisper-web"
       - title: "Dojo key"
         url: "https://jonathansoma.com/dojo-key.txt"
-    draft: true
 
   # Day 3 - Wednesday
   - folder: 04-scraping
