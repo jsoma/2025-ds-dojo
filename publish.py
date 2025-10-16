@@ -1249,15 +1249,15 @@ def create_index(notebooks, config, output_dir):
                     notebooks_md.append(f"- [{name}]({url})\n")
             notebooks_md.append('\n')
     
-    # Process sections in the order they appear in config
+    # Process sections in the order they appear in config (include even if empty)
     section_order = []
-    for section_cfg in config.get('sections', []):
+    for section_cfg in config.get('sections', []) or []:
         if isinstance(section_cfg, dict):
             title = section_cfg.get('title', section_cfg.get('folder'))
-            if title in sections:
+            if title:
                 section_order.append(title)
-    
-    # Add any sections not in config at the end
+
+    # Add any sections discovered from processed items that aren't in config at the end
     for section in sorted(sections.keys()):
         if section not in section_order:
             section_order.append(section)

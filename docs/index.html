@@ -414,6 +414,55 @@ function loadSlides(id, src) {
 <h2 id="working-with-apis">Working with APIs</h2>
 <p>Accessing data from web APIs programmatically, handling JSON responses, and paginated results</p>
 <p><em>Content will be uploaded later.</em></p>
+<h2 id="ai-for-research-and-business">AI for Research and Business</h2>
+<div id="slides-03-dojo-practical-ai" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-03-dojo-practical-ai', './05-ai/03-dojo-practical-ai.pdf')">
+        <img src="./05-ai/03-dojo-practical-ai-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./05-ai/03-dojo-practical-ai.pdf" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+    <embed src="./05-ai/03-dojo-practical-ai.pdf" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<div class="download-box">
+<strong>Section files:</strong> <a href="./05-ai/05-ai-data.zip">📦 05-ai-data.zip</a>
+</div>
+
+<p><strong>Useful Links for this section:</strong></p>
+<ul>
+<li><a href="https://gemini.google.com/">Google Gemini (just for chatting!)</a></li>
+
+<li><a href="https://gemini.google.com/">Google Gemini (just for chatting!)</a></li>
+
+<li><a href="https://colab.research.google.com/">Google Colab</a></li>
+
+<li><a href="https://docs.google.com/spreadsheets/d/1vC7k7ft9TsPDud2rl3MOMqUZBxdJbC4jQ59QEMPP0nY/edit">Claude for Sheets Example</a></li>
+
+<li><a href="https://notebooklm.google.com/">NotebookLM</a></li>
+
+<li><a href="https://huggingface.co/spaces/Xenova/whisper-webgpu">Whisper WebGPU (faster)</a></li>
+
+<li><a href="https://huggingface.co/spaces/Xenova/whisper-web">Whisper Web</a></li>
+
+<li><a href="https://jonathansoma.com/dojo-key.txt">Dojo key</a></li>
+
+</ul>
+
 <h2 id="web-scraping">Web Scraping</h2>
 <p>Extracting data from websites using BeautifulSoup and Playwright, handling dynamic content</p>
 <p><em>Content will be uploaded later.</em></p>
