@@ -91,7 +91,34 @@ sections:
         url: "https://inspectelement.org/"
       - title: "Using Paginated APIs (Video)"
         url: "https://www.youtube.com/watch?v=4Fdyft-ky0w"
-    draft: false
+    draft: true
+
+  # Day 4 - Thursday Part 1
+  - folder: 05-ai
+    title: "AI for Research and Business"
+    description: "Using AI tools for data extraction from PDFs, text analysis, and document processing"
+    slides: 05-ai/03-dojo-practical-ai.pptx  # 141MB!
+    data_files:
+      - "05-ai/documents/*.pdf"
+      - "05-ai/*.csv"
+    links:
+      - title: "Google Gemini (just for chatting!)"
+        url: "https://gemini.google.com/"
+      - title: "Google Gemini (just for chatting!)"
+        url: "https://gemini.google.com/"
+      - title: "Google Colab"
+        url: "https://colab.research.google.com/"
+      - title: "Claude for Sheets Example"
+        url: "https://docs.google.com/spreadsheets/d/1vC7k7ft9TsPDud2rl3MOMqUZBxdJbC4jQ59QEMPP0nY/edit"
+      - title: "NotebookLM"
+        url: "https://notebooklm.google.com/"
+      - title: "Whisper WebGPU (faster)"
+        url: "https://huggingface.co/spaces/Xenova/whisper-webgpu"
+      - title: "Whisper Web"
+        url: "https://huggingface.co/spaces/Xenova/whisper-web"
+      - title: "Dojo key"
+        url: "https://jonathansoma.com/dojo-key.txt"
+    draft: true
 
   # Day 3 - Wednesday
   - folder: 04-scraping
@@ -104,24 +131,6 @@ sections:
     links:
       - title: "Automatic Scraper Tutorial"
         url: "https://www.youtube.com/watch?v=QNKxzkNpsko"
-    draft: true
-
-  # Day 4 - Thursday Part 1
-  - folder: 05-ai
-    title: "AI for Journalism"
-    description: "Using AI tools for data extraction from PDFs, text analysis, and document processing"
-    slides: 05-ai/03-dojo-practical-ai.pptx  # 141MB!
-    data_files:
-      - "pdfs/*.pdf"
-      - "*.pdf"
-      - "*.png"
-    links:
-      - title: "Claude for Sheets Example"
-        url: "https://docs.google.com/spreadsheets/d/1vC7k7ft9TsPDud2rl3MOMqUZBxdJbC4jQ59QEMPP0nY/edit"
-      - title: "Hugging Face"
-        url: "https://huggingface.co/models"
-      - title: "Anything LLM"
-        url: "https://anythingllm.com/"
     draft: true
 
   # Day 4 - Thursday Part 2
