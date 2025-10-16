@@ -238,5 +238,21 @@
 <p>Programmers are weird about counting. What number do they start with?</p>
 <p>There might be a magic way to get the last item of a list in Python (or to start counting from the end).</p>
 <p>When dealing with multiple numbers - population, for example - be sure to keep them all at the same level. If Brooklyn has 1.4 million people and Staten Island as 470,000, storing their population as 1.4 and 470000 isn't going to let you compare them accurately!</p>
+
+<script>
+(function() {
+  try {
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
+      var rel = a.getAttribute('rel') || '';
+      if (!/noopener/.test(rel)) {
+        a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+      }
+    });
+  } catch (e) { /* no-op */ }
+})();
+</script>
+
 </body>
 </html>

@@ -64,14 +64,31 @@ def generate_toc_from_markdown(markdown_content, has_useful_links=False):
     
     return "\n".join(toc_lines) + "\n"
 
-def markdown_to_html(content, title=""):
+def markdown_to_html(content: str, title: str = "") -> str:
     """Convert markdown to HTML with basic styling."""
     if markdown:
         html_content = markdown.markdown(content, extensions=['extra', 'codehilite', 'toc'])
     else:
         # Fallback: just wrap in pre tags if markdown not available
         html_content = f"<pre>{content}</pre>"
-    
+    # Add a small script to ensure all links open in a new tab safely
+    link_target_script = """
+<script>
+(function() {
+  try {
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
+      var rel = a.getAttribute('rel') || '';
+      if (!/\bnoopener\b/.test(rel)) {
+        a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+      }
+    });
+  } catch (e) { /* no-op */ }
+})();
+</script>
+"""
+
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -224,6 +241,7 @@ def markdown_to_html(content, title=""):
 </head>
 <body>
 {html_content}
+{link_target_script}
 </body>
 </html>"""
 
@@ -1426,11 +1444,24 @@ h2::before {
     width: 100vw; /* paint full-bleed background */
     top: 0;
     bottom: 0;
-    background: #d86ecc;
+    background: linear-gradient(120deg, #d86ecc 0%, #8d71ff 100%);
     border-top: 1px solid #ead8f1;
     border-bottom: 1px solid #ead8f1;
     z-index: -1;
 }
+
+/* Color progression for section banners */
+/* Fallback colors if custom properties not supported */
+h2:nth-of-type(1)::before { background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%); }
+h2:nth-of-type(2)::before { background: linear-gradient(120deg, #7edbb6 0%, #a9f0d5 100%); }
+h2:nth-of-type(3)::before { background: linear-gradient(120deg, #ffd166 0%, #ffe6a3 100%); }
+h2:nth-of-type(4)::before { background: linear-gradient(120deg, #f78da7 0%, #fbbcd0 100%); }
+h2:nth-of-type(5)::before { background: linear-gradient(120deg, #c792ea 0%, #e1b8ff 100%); }
+h2:nth-of-type(6)::before { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+h2:nth-of-type(7)::before { background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%); }
+h2:nth-of-type(8)::before { background: linear-gradient(120deg, #a18cd1 0%, #fbc2eb 100%); }
+h2:nth-of-type(9)::before { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+h2:nth-of-type(10)::before { background: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%); }
 </style>
 
 <div class="hero-bleed">

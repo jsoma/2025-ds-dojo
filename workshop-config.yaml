@@ -105,8 +105,6 @@ sections:
     links:
       - title: "Google Gemini (just for chatting!)"
         url: "https://gemini.google.com/"
-      - title: "Google Gemini (just for chatting!)"
-        url: "https://gemini.google.com/"
       - title: "Google Colab"
         url: "https://colab.research.google.com/"
       - title: "Claude for Sheets Example"
@@ -117,7 +115,7 @@ sections:
         url: "https://huggingface.co/spaces/Xenova/whisper-webgpu"
       - title: "Whisper Web"
         url: "https://huggingface.co/spaces/Xenova/whisper-web"
-      - title: "Dojo key"
+      - title: "DOJO key"
         url: "https://jonathansoma.com/dojo-key.txt"
     
   # Day 3 - Wednesday

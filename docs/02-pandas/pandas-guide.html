@@ -188,5 +188,21 @@ I have a dataframe that looks like the below. I want to _____.
 </pre>
 
 <p>It can sometimes be useful to ask "is there a simpler approach?" after you ask a question.</p>
+
+<script>
+(function() {
+  try {
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
+      var rel = a.getAttribute('rel') || '';
+      if (!/noopener/.test(rel)) {
+        a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+      }
+    });
+  } catch (e) { /* no-op */ }
+})();
+</script>
+
 </body>
 </html>

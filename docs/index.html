@@ -188,11 +188,24 @@ h2::before {
     width: 100vw; /* paint full-bleed background */
     top: 0;
     bottom: 0;
-    background: #d86ecc;
+    background: linear-gradient(120deg, #d86ecc 0%, #8d71ff 100%);
     border-top: 1px solid #ead8f1;
     border-bottom: 1px solid #ead8f1;
     z-index: -1;
 }
+
+/* Color progression for section banners */
+/* Fallback colors if custom properties not supported */
+h2:nth-of-type(1)::before { background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%); }
+h2:nth-of-type(2)::before { background: linear-gradient(120deg, #7edbb6 0%, #a9f0d5 100%); }
+h2:nth-of-type(3)::before { background: linear-gradient(120deg, #ffd166 0%, #ffe6a3 100%); }
+h2:nth-of-type(4)::before { background: linear-gradient(120deg, #f78da7 0%, #fbbcd0 100%); }
+h2:nth-of-type(5)::before { background: linear-gradient(120deg, #c792ea 0%, #e1b8ff 100%); }
+h2:nth-of-type(6)::before { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+h2:nth-of-type(7)::before { background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%); }
+h2:nth-of-type(8)::before { background: linear-gradient(120deg, #a18cd1 0%, #fbc2eb 100%); }
+h2:nth-of-type(9)::before { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+h2:nth-of-type(10)::before { background: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%); }
 </style>
 
 <div class="hero-bleed">
@@ -447,8 +460,6 @@ function loadSlides(id, src) {
 <ul>
 <li><a href="https://gemini.google.com/">Google Gemini (just for chatting!)</a></li>
 
-<li><a href="https://gemini.google.com/">Google Gemini (just for chatting!)</a></li>
-
 <li><a href="https://colab.research.google.com/">Google Colab</a></li>
 
 <li><a href="https://docs.google.com/spreadsheets/d/1vC7k7ft9TsPDud2rl3MOMqUZBxdJbC4jQ59QEMPP0nY/edit">Claude for Sheets Example</a></li>
@@ -459,7 +470,7 @@ function loadSlides(id, src) {
 
 <li><a href="https://huggingface.co/spaces/Xenova/whisper-web">Whisper Web</a></li>
 
-<li><a href="https://jonathansoma.com/dojo-key.txt">Dojo key</a></li>
+<li><a href="https://jonathansoma.com/dojo-key.txt">DOJO key</a></li>
 
 </ul>
 
@@ -472,5 +483,21 @@ function loadSlides(id, src) {
 <h2 id="final-projects">Final Projects</h2>
 <p>Project work time, troubleshooting, and presentations of data journalism projects</p>
 <p><em>Content will be uploaded later.</em></p>
+
+<script>
+(function() {
+  try {
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
+      var rel = a.getAttribute('rel') || '';
+      if (!/noopener/.test(rel)) {
+        a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+      }
+    });
+  } catch (e) { /* no-op */ }
+})();
+</script>
+
 </body>
 </html>
