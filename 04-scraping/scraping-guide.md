@@ -1,81 +1,60 @@
 ---
-title: "Scraping"
+title: "Scraping with Playwright and AI"
+links:
+  - name: "National Azabu"
+    url: "https://www.national-azabu.net/products/list?category_id=52"
+  - name: "SUUMO"
+    url: "https://suumo.jp/chintai/tokyo/sc_chiyoda/mansion/"
+  - name: "Mercari"
+    url: "https://jp.mercari.com/search?category_id=72"  
 ---
 
 [Playwright](https://playwright.dev/python/) is a great library for scraping data in Python.
 
-# Session content
-
-## Code and data
-
-This morning you will create your own notebooks!
-
-- Data cleaning notebooks are included in this folder
-
-## Slides
-
-- Scraping slides are available in the main section
-
-## Homework
-
-- Continue working on the data cleaning notebooks from the pandas section
-- Try the `02-cleaning-worksheet.ipynb` notebook in this folder. Use your data cleaning skills to extract the appropriate data (and don't look at the completed version!)
-- [Scrape some content from here](https://www.national-azabu.net/products/list?category_id=52)
-
-## Setup
-
-Playwright is installed using `pip`. It also needs many other tools to make sure our code will work. Please run the code below in a Jupyterlab Desktop notebook cell:
-
-```bash
-%%python -m pip install lxml html5lib beautifulsoup4 pandas playwright
-```
-
-Then we need to install web browsers for Playwright to use. Use the code below. **Notice the note below if you receive an error.**
-
-```bash
-!playwright install
-```
-
-> **If you get an error** with `!playwright install`, try to run this code for your install:
-> 
-> ```bash
-> %pip install lxml html5lib beautifulsoup4 pandas playwright
-> ```
->
-> if that does not work, try `!pip install` (`!` instead of `%`), and if that does not work try `pip install` (no `%`, no `!`)
->
-> Then try to run `!playwright install` again
-
-If you use Windows, you also need to **few more lines** to make Playwright work in Jupyter.
-
-```py
-%%python -m pip install --quiet "ipykernel==6.28.0"
-get_ipython().kernel.do_shutdown(restart=True)
-```
-
-## Additional links
-
-- [Scraping with Playwright](https://www.youtube.com/watch?v=UPQQ3cyFrpg), a video
-
 # Guide
 
-## Starting the prompt
+## The prompt
 
-First, paste [this custom prompt](https://jsoma.github.io/2024-ds-dojo/scraping-prompt-2.html) into ChatGPT. It will walk you through the process
+First, paste this custom prompt into ChatGPT, Gemini or Claude. It will walk you through the process of building a scraper.
 
-## Getting basic code
+```
+Help me write a Python Playwright scraper to scrape data from a website and download it as a CSV.  Proceed in several steps, ONE AT A TIME. Do not proceed to the next step until you get a satisfactory answer to the prior one.
 
-For the first step, ChatGPT will ask you to run `!playwright codegen`. This will open a new browser.
+1. Ask what the URL is
+2. Ask if there are any forms or fields to be filled out. This might include things like "try every value in this dropdown" or "try every ZIP code in Maryland in this search field." 
+3. Confirm the pieces that need to be scraped from the page. The easiest way is to just ask me to copy the HTML of one item on the page. Don't confirm columns until I give you the HTML.
+4. Confirm pagination details.
+- Ask me how pagination works ('next' button, numbered pages, infinite scroll)
+- If it is buttons, ask me to copy the HTML of the pagination
+- Ask if we should scrape the first X pages, or all the pages
+5. Write the guide
 
-Use this browser to visit the page you want to scrape, fill out any forms you need (dropdowns, inputs, buttons), and click a "next" button if necessary.
+If there is a form that needs to be filled out, you may need to get the HTML for the entire form or parts of the form. If necessary a similar walkthrough as below to understand the HTML. 
 
-![](images/codegen-1.png)
+If we need to provide a list of inputs - zip codes, names, license IDs, etc - determine whether they are coming from a dataframe, and if so what the column name is. Be sure you know how to submit the form.
 
-There is a second window that will write code for you. This will teach ChatGPT how to use the website.
+To confirm columns details, walk me through how to copy the outer HTML of one "row" of data. I'm new to scraping and might need help. Be patient. When you ask for HTML, ask if I need help copying it. If yes, then provide a gentle walkthrough.
 
-Before you cut and paste the code into ChatGPT, use the dropdown to change the code to **Python > Library Async**
+After you see the HTML you can decide on columns to be saved, then confirm them with me. If it isn't clear, explain what you need from me.
 
-![](images/codegen-2.png)
+Help me determine the pagination situation. Are there multiple pages of content? Is there a 'next page' button that can be pressed again and again? Do you need to click an incrementing number of pages? Have me copy any HTML for the pagination so you know how to parse/interact with it to be sure we scrape all of the data. Ask if infinite scroll is necessary.
+
+I don't really understand HTML or how the web inspector works. If I need help with getting the HTML, you should ask what browser I'm using: my browser might be Edge, Chrome, or Safari.
+
+Since I will be doing this in a notebook on Colab, I need you to provide the code to me in appropriate-sized chunks, one cell at a time. Do not provide a large dump of all of the code at once.
+
+I am easily intimidated by lots of questions of technical issues. Please try to be patient and simple with me. If you need something from me, ask one or two questions at a time, not a barrage. Examples are helpful.
+
+Remember that we are in a Colab notebook, so there are special considerations when using Playwright – for example, using await/async/nested async. You will need to install both playwright and the browser. Use Firefox instead of Chromium.
+
+Take a screenshot of the page to display in the notebook when the page loads. That is always fun!
+
+Use progress bars and notifications as we iterate through pages, and provide helpful visual feedback as the page(s) are scraped.
+
+Only ask ONE question at a time. I'm easily overwhelmed.
+
+In the last step, we should preview the results and download them to my computer (from Colab).
+```
 
 ## Opening the web inspector
 
@@ -113,20 +92,6 @@ For the next step, repeat the process above to get the HTML code for the **pagin
 
 ## Fixing the output
 
-The code that ChatGPT produces is **always a little wrong** at first. Add this prompt after ChatGPT gives you its code to improve it:
-
-<pre class="prompt">
-Remember my important notes!
-- Use async playwright with async/await
-- Do NOT use asyncio
-- Flatten the code to not use functions, so the data and df are available in other cells
-- No main function
-
-We are just testing this now. Have it scrape a maximum of 5 pages.
-</pre>
-
-## Iterating
-
-You might be done! If you get an error, paste it into ChatGPT to get new code as an answer. If you get another error, paste that error in.
+The code that ChatGPT produces is **sometimes a little wrong** so don't feel bad if you get an error. It is better than last year, though!
 
 **After two errors, just start from the beginning in a new chat.** There are many ways to write Playwright scraping code and starting from zero might be best.

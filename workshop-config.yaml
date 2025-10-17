@@ -85,14 +85,20 @@ sections:
   - folder: 03-apis
     title: "Working with APIs"
     description: "Accessing data from web APIs programmatically, handling JSON responses, and paginated results"
-    slides: structured-data.pptx
+    slides: 04-scraping/nikkei-scraping.pptx
     api_keys_url: "https://bit.ly/nikkei-api-keys-2025"
     links:
+      - title: Google Colab
+        url: https://colab.research.google.com/
       - title: "Inspect Element - Undocumented APIs"
         url: "https://inspectelement.org/"
       - title: "Using Paginated APIs (Video)"
         url: "https://www.youtube.com/watch?v=4Fdyft-ky0w"
-    draft: true
+      - title: "USGS Earthquake APIs"
+        url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php"
+      - title: "Weather API"
+        url: "https://www.weatherapi.com/my/"
+    draft: false
 
   # Day 4 - Thursday Part 1
   - folder: 05-ai
@@ -121,15 +127,15 @@ sections:
   # Day 3 - Wednesday
   - folder: 04-scraping
     title: "Web Scraping"
-    description: "Extracting data from websites using BeautifulSoup and Playwright, handling dynamic content"
+    description: "Extracting data from websites using Playwright, handling dynamic content"
     slides: 04-scraping/nikkei-scraping.pptx  # 106MB - will convert to PDF
     data_files:
-      - "*.csv"
-      - "*.xlsx"
     links:
-      - title: "Automatic Scraper Tutorial"
+      - title: "Auto-updating data visualizations from scraped data (video)"
         url: "https://www.youtube.com/watch?v=QNKxzkNpsko"
-    draft: true
+      - title: "Scraping with Playwright (video)"
+        url: https://www.youtube.com/watch?v=UPQQ3cyFrpg
+    draft: false
 
   # Day 4 - Thursday Part 2
   - folder: 06-visualization
@@ -164,6 +170,18 @@ sections:
     description: "Project work time, troubleshooting, and presentations of data journalism projects"
     slides: 07-projects/nikkei-projects.pptx  # 4MB
     draft: true
+
+  - folder: 08-pipelines
+    title: "AI Agents and pipelines"
+    description: "Building tools powered by AI"
+    slides: 08-pipelines/ai-products.pptx
+    api_keys_url: "https://bit.ly/nikkei-api-keys-2025"
+    links:
+      - title: "n8n"
+        url: "https://n8n.io/"
+      - title: ActivePieces
+        url: "https://www.activepieces.com/"
+    draft: false
 
 git_lfs_threshold_mb: 50  # Will catch large PPTX files
 

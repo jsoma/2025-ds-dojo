@@ -16,15 +16,48 @@
             font-size: 16px;
             padding-bottom: 5em;
         }
-        h1, h3, h4 { margin-top: 2em; }
+        h1 {
+            margin-top: 0;
+            padding: 3em 0 2em;
+            text-align: center;
+            font-size: 2.2em;
+            color: #333;
+        }
+        h3, h4 { margin-top: 2em; }
         h2 {
             position: sticky;
             top: 0;
-            background: white;
-            padding-top: 2em;
-            padding-bottom: 0.5em;
             z-index: 100;
+            margin-top: 2.4em;
+            margin-bottom: 0.9em;
+            padding: 16px 0;
+            background: transparent !important;
+            border: none;
+            color: white;
         }
+        h2::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%);
+            border-top: 1px solid #ead8f1;
+            border-bottom: 1px solid #ead8f1;
+            z-index: -1;
+        }
+        h2:nth-of-type(1)::before { background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%); }
+        h2:nth-of-type(2)::before { background: linear-gradient(120deg, #7edbb6 0%, #a9f0d5 100%); }
+        h2:nth-of-type(3)::before { background: linear-gradient(120deg, #ffd166 0%, #ffe6a3 100%); }
+        h2:nth-of-type(4)::before { background: linear-gradient(120deg, #f78da7 0%, #fbbcd0 100%); }
+        h2:nth-of-type(5)::before { background: linear-gradient(120deg, #c792ea 0%, #e1b8ff 100%); }
+        h2:nth-of-type(6)::before { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+        h2:nth-of-type(7)::before { background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%); }
+        h2:nth-of-type(8)::before { background: linear-gradient(120deg, #a18cd1 0%, #fbc2eb 100%); }
+        h2:nth-of-type(9)::before { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+        h2:nth-of-type(10)::before { background: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%); }
         h3 a {
             text-decoration: none;
         }
@@ -40,13 +73,45 @@
             border-radius: 3px;
             font-family: Consolas, Monaco, monospace;
         }
-        pre { 
-            background: #f4f4f4; 
-            padding: 1em; 
-            border-radius: 5px; 
+        pre {
+            background: #f4f4f4;
+            padding: 1em;
+            border-radius: 5px;
             overflow-x: auto;
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        pre code { background: none; padding: 0; }
+        pre code {
+            background: none;
+            padding: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        .copy-button:hover {
+            background: #0052a3;
+        }
+        .copy-button:active {
+            background: #004080;
+        }
+        .copy-button.copied {
+            background: #28a745;
+        }
         a { color: #0066cc; }
         img {
             display: block;
@@ -425,8 +490,134 @@ function loadSlides(id, src) {
 
 </ul>
 <h2 id="working-with-apis">Working with APIs</h2>
-<p>Accessing data from web APIs programmatically, handling JSON responses, and paginated results</p>
-<p><em>Content will be uploaded later.</em></p>
+<div id="slides-nikkei-scraping" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-nikkei-scraping', './03-apis/nikkei-scraping.pdf')">
+        <img src="./03-apis/nikkei-scraping-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./03-apis/nikkei-scraping.pdf" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+    <embed src="./03-apis/nikkei-scraping.pdf" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<p><strong>Useful Links for this section:</strong></p>
+<ul>
+<li><a href="https://colab.research.google.com/">Google Colab</a></li>
+
+<li><a href="https://inspectelement.org/">Inspect Element - Undocumented APIs</a></li>
+
+<li><a href="https://www.youtube.com/watch?v=4Fdyft-ky0w">Using Paginated APIs (Video)</a></li>
+
+<li><a href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php">USGS Earthquake APIs</a></li>
+
+<li><a href="https://www.weatherapi.com/my/">Weather API</a></li>
+
+</ul>
+
+<h3 id="undocumented-apis"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb">Undocumented APIs →</a></h3>
+<p>Finding and using undocumented APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/05-Rakuten Seiyu-Undocumented APIs-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/05-Rakuten Seiyu-Undocumented APIs.ipynb">worksheet</a> | 
+<a href="./03-apis/05-Rakuten Seiyu-Undocumented APIs-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="rakuten-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten.ipynb">Rakuten API →</a></h3>
+<p>Using Japanese e-commerce APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/04-Rakuten-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/04-Rakuten.ipynb">worksheet</a> | 
+<a href="./03-apis/04-Rakuten-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="weather-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather.ipynb">Weather API →</a></h3>
+<p>Getting weather data from APIs</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/03-Weather-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/03-Weather.ipynb">worksheet</a> | 
+<a href="./03-apis/03-Weather-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="pokemon-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon.ipynb">Pokemon API →</a></h3>
+<p>Practice with a fun API</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/02-Pokemon-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/02-Pokemon.ipynb">worksheet</a> | 
+<a href="./03-apis/02-Pokemon-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
+<h3 id="earthquake-api"><a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes.ipynb">Earthquake API →</a></h3>
+<p>Using the USGS earthquake API</p>
+<div class="resource-buttons">
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes.ipynb" class="resource-button primary">🚀 Open in Colab</a>
+
+<a href="https://colab.research.google.com/github/jsoma/2025-ds-dojo/blob/main/docs/03-apis/01-Earthquakes-ANSWERS.ipynb" class="resource-button completed">✓ Completed (Colab)</a>
+
+</div>
+
+<div class="download-links">
+
+📓 Download: <a href="./03-apis/01-Earthquakes.ipynb">worksheet</a> | 
+<a href="./03-apis/01-Earthquakes-ANSWERS.ipynb">completed</a><br>
+
+</div>
+
+</ul>
 <h2 id="ai-for-research-and-business">AI for Research and Business</h2>
 <div id="slides-03-dojo-practical-ai" class="slide-embed" style="margin: 2em 0;">
     <div class="slide-preview" onclick="loadSlides('slides-03-dojo-practical-ai', './05-ai/03-dojo-practical-ai.pdf')">
@@ -475,18 +666,96 @@ function loadSlides(id, src) {
 </ul>
 
 <h2 id="web-scraping">Web Scraping</h2>
-<p>Extracting data from websites using BeautifulSoup and Playwright, handling dynamic content</p>
-<p><em>Content will be uploaded later.</em></p>
+<div id="slides-nikkei-scraping" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-nikkei-scraping', './04-scraping/nikkei-scraping.pdf')">
+        <img src="./04-scraping/nikkei-scraping-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./04-scraping/nikkei-scraping.pdf" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+    <embed src="./04-scraping/nikkei-scraping.pdf" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<p><strong>Useful Links for this section:</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=QNKxzkNpsko">Auto-updating data visualizations from scraped data (video)</a></li>
+
+<li><a href="https://www.youtube.com/watch?v=UPQQ3cyFrpg">Scraping with Playwright (video)</a></li>
+
+</ul>
+
+<h3 id="scraping-with-playwright-and-ai"><a href="./04-scraping/scraping-guide.html">Scraping with Playwright and AI →</a></h3>
+<div>
+
+</div>
+
+<p><strong>Links:</strong></p>
+<ul>
+<li><a href="https://www.national-azabu.net/products/list?category_id=52">National Azabu</a></li>
+
+<li><a href="https://suumo.jp/chintai/tokyo/sc_chiyoda/mansion/">SUUMO</a></li>
+
+<li><a href="https://jp.mercari.com/search?category_id=72">Mercari</a></li>
+
+</ul>
+
 <h2 id="data-visualization">Data Visualization</h2>
 <p>Creating effective data visualizations with matplotlib, seaborn, and online tools like Datawrapper. Also covers PDF extraction techniques.</p>
 <p><em>Content will be uploaded later.</em></p>
 <h2 id="final-projects">Final Projects</h2>
 <p>Project work time, troubleshooting, and presentations of data journalism projects</p>
 <p><em>Content will be uploaded later.</em></p>
+<h2 id="ai-agents-and-pipelines">AI Agents and pipelines</h2>
+<div id="slides-ai-products" class="slide-embed" style="margin: 2em 0;">
+    <div class="slide-preview" onclick="loadSlides('slides-ai-products', './08-pipelines/ai-products.pdf')">
+        <img src="./08-pipelines/ai-products-thumb.png" alt="First slide" style="max-width: 100%; cursor: pointer;">
+        <p style="text-align: center; margin-top: 0.5em;">
+            <button style="padding: 0.5em 1em; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                📊 View Slides
+            </button>
+            <a href="./08-pipelines/ai-products.pdf" download style="margin-left: 1em;">📥 Download PDF</a>
+        </p>
+    </div>
+    <div class="slide-container" style="display: none;">
+    <embed src="./08-pipelines/ai-products.pdf" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid #ddd;">
+    </div>
+</div>
+
+<script>
+function loadSlides(id, src) {
+    const container = document.querySelector(`#${id} .slide-container`);
+    const preview = document.querySelector(`#${id} .slide-preview`);
+    container.style.display = 'block';
+    preview.style.display = 'none';
+}
+</script>
+
+<p><strong>Useful Links for this section:</strong></p>
+<ul>
+<li><a href="https://n8n.io/">n8n</a></li>
+
+<li><a href="https://www.activepieces.com/">ActivePieces</a></li>
+
+</ul>
 
 <script>
 (function() {
   try {
+    // Make all links open in new tab
     var links = document.querySelectorAll('a[href]');
     links.forEach(function(a){
       if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
@@ -494,6 +763,29 @@ function loadSlides(id, src) {
       if (!/noopener/.test(rel)) {
         a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
       }
+    });
+
+    // Add copy buttons to all code blocks
+    var codeBlocks = document.querySelectorAll('pre');
+    codeBlocks.forEach(function(pre) {
+      var button = document.createElement('button');
+      button.className = 'copy-button';
+      button.textContent = 'Copy';
+      button.addEventListener('click', function() {
+        var code = pre.querySelector('code') || pre;
+        var text = code.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+          button.textContent = 'Copied!';
+          button.classList.add('copied');
+          setTimeout(function() {
+            button.textContent = 'Copy';
+            button.classList.remove('copied');
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Failed to copy:', err);
+        });
+      });
+      pre.appendChild(button);
     });
   } catch (e) { /* no-op */ }
 })();
