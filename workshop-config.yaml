@@ -143,6 +143,14 @@ sections:
         url: "https://www.youtube.com/watch?v=QNKxzkNpsko"
       - title: "Scraping with Playwright (video)"
         url: https://www.youtube.com/watch?v=UPQQ3cyFrpg
+      - title: "National Azabu vegetables"
+        url: "https://www.national-azabu.net/products/list?category_id=52"
+      - title: "SUUMO rental apartments in Chiyoda"
+        url: "https://suumo.jp/chintai/tokyo/sc_chiyoda/mansion/"
+      - title: "Mercari books"
+        url: "https://jp.mercari.com/search?category_id=72"  
+      - title: "Tabelog"
+        url: "https://tabelog.com/tokyo/A1310/A131002/R2080/rstLst/?SrtT=rt&Srt=D&sort_mode=1"
     draft: false
 
   # Day 4 - Thursday Part 2

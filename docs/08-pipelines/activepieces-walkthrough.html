@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Activepieces walkthrough</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 40px auto;
+            margin-top: 0;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 16px;
+            padding-bottom: 5em;
+        }
+        h1 {
+            margin-top: 0;
+            padding: 3em 0 2em;
+            text-align: center;
+            font-size: 2.2em;
+            color: #333;
+        }
+        h3, h4 { margin-top: 2em; }
+        h2 {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-top: 2.4em;
+            margin-bottom: 0.9em;
+            padding: 16px 0;
+            background: transparent !important;
+            border: none;
+            color: white;
+        }
+        h2::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%);
+            border-top: 1px solid #ead8f1;
+            border-bottom: 1px solid #ead8f1;
+            z-index: -1;
+        }
+        h2:nth-of-type(1)::before { background: linear-gradient(120deg, #6fa8ff 0%, #a1d1ff 100%); }
+        h2:nth-of-type(2)::before { background: linear-gradient(120deg, #7edbb6 0%, #a9f0d5 100%); }
+        h2:nth-of-type(3)::before { background: linear-gradient(120deg, #ffd166 0%, #ffe6a3 100%); }
+        h2:nth-of-type(4)::before { background: linear-gradient(120deg, #f78da7 0%, #fbbcd0 100%); }
+        h2:nth-of-type(5)::before { background: linear-gradient(120deg, #c792ea 0%, #e1b8ff 100%); }
+        h2:nth-of-type(6)::before { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+        h2:nth-of-type(7)::before { background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 100%); }
+        h2:nth-of-type(8)::before { background: linear-gradient(120deg, #a18cd1 0%, #fbc2eb 100%); }
+        h2:nth-of-type(9)::before { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+        h2:nth-of-type(10)::before { background: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%); }
+        h3 a {
+            text-decoration: none;
+        }
+        h3 a:hover {
+            text-decoration: underline;
+        }
+        p {
+            margin: 1em 0;
+        }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 4px; 
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        .copy-button:hover {
+            background: #0052a3;
+        }
+        .copy-button:active {
+            background: #004080;
+        }
+        .copy-button.copied {
+            background: #28a745;
+        }
+        a { color: #0066cc; }
+        img {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        blockquote {
+            border-left: solid lightblue 20px;
+            margin-left: 4em;
+            padding-left: 1em;
+            color: #999;
+        }
+        video {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 1em auto;
+            border: solid 1px #999;
+        }
+        .download-box {
+            background: #e8f4f8;
+            padding: 1em;
+            border-radius: 5px;
+            margin: 1em 0;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 2em;
+            margin: 0.5em 0;
+        }
+        li {
+            margin: 0.3em 0;
+        }
+        .section-header {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .resource-buttons {
+            margin: 1em 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        .resource-button {
+            display: inline-block;
+            padding: 0.4em 0.8em;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .resource-button:hover {
+            background: #e0e0e0;
+            border-color: #ccc;
+        }
+        .resource-button.primary {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #90caf9;
+        }
+        .resource-button.primary:hover {
+            background: #bbdefb;
+            border-color: #64b5f6;
+        }
+        .resource-button.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+        .resource-button.completed:hover {
+            background: #c8e6c9;
+            border-color: #81c784;
+        }
+        .data-download {
+            margin: 0.5em 0;
+            font-size: 0.9em;
+        }
+        .download-links {
+            margin: 0.5em 0;
+            line-height: 1.8;
+        }
+        .download-links a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+        .download-links a:hover {
+            text-decoration: underline;
+        }
+        p:last {
+            margin-bottom: 0;
+            margin-top: 5em;
+        }
+    </style>
+</head>
+<body>
+<p><a href="../index.html">← Back to main page</a></p>
+<h1 id="activepieces-walkthrough">Activepieces walkthrough</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#useful-links">Useful Links</a></li>
+</ul>
+<h2 id="useful-links">Useful Links</h2>
+<ul>
+<li><a href="https://www.activepieces.com">ActivePieces</a></li>
+<li><a href="http://perplexity.ai/">Perplexity AI</a></li>
+<li><a href="https://jonathansoma.com/dojo-key.txt">DOJO keys</a></li>
+</ul>
+<p>Log into <a href="https://activepieces.com">ActivePieces</a> and create a new flow.</p>
+<p><img alt="" src="images/01.png" /></p>
+<p>Select the trigger of <strong>Every Week</strong>, then update it to be every Monday at 8am.</p>
+<p><img alt="" src="images/02.png" /></p>
+<p><img alt="" src="images/03.png" /></p>
+<p>Add a new step by clicking the <code>+</code> button.</p>
+<p><img alt="" src="images/04.png" /></p>
+<p>Search for an add the <strong>Perplexity AI</strong> option. Update it with a new connection using my <a href="https://jonathansoma.com/dojo-key.txt">Perplexity API key</a>.</p>
+<p><img alt="" src="images/05.png" /></p>
+<p><img alt="" src="images/06.png" /></p>
+<p><img alt="" src="images/07.png" /></p>
+<p>Describe what you want Perplexity to research for you. In my case, I'm looking at AI and journalism as a weekly newsletter update. Be as specific as you want - individual sources or just "search the internet!"</p>
+<p><img alt="" src="images/08.png" /></p>
+<p>Click <strong>Test</strong> to see the output. <em>You always need to do this when you finish a step.</em></p>
+<p><img alt="" src="images/09.png" /></p>
+<p>Add a new step for <strong>Ask AI</strong>. We will use this to convert Perplexity's research into an easy-to-read format.</p>
+<p><img alt="" src="images/10.png" /></p>
+<p>I've decided to use OpenAI's GPT-5 Mini, because all it's doing is rewriting a report, nothing fancy. To give it the content to include, I need to use the <strong>Data selector</strong> and click Perplexity's result.</p>
+<p><img alt="" src="images/11.png" /></p>
+<p><img alt="" src="images/12.png" /></p>
+<p>Click <strong>Test</strong> to make sure it works.</p>
+<p><img alt="" src="images/13.png" /></p>
+<p>AI writes in Markdown, like we do in Notebooks. But we want this in HTML so we can send it in an email. Add the <strong>Markdown to HTML</strong> piece next.</p>
+<p><img alt="" src="images/14.png" /></p>
+<p>Insert the result of the Ask AI step, and test it.</p>
+<p><img alt="" src="images/15.png" /></p>
+<p>Now we want to send the email (or pretend to). Search for 'send email' and choose your provider - I use GMail.</p>
+<p><img alt="" src="images/16.png" /></p>
+<p>I then create a new connection to Google, and allow ActivePieces to send email from my account.</p>
+<p><img alt="" src="images/17.png" /></p>
+<p>Fill in the final few results.</p>
+<p><img alt="" src="images/18.png" />
+<img alt="" src="images/19.png" /></p>
+<p>Click <strong>Publish</strong> up top and you'll be ready to go!</p>
+
+<script>
+(function() {
+  try {
+    // Make all links open in new tab
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      if (!a.getAttribute('target')) { a.setAttribute('target', '_blank'); }
+      var rel = a.getAttribute('rel') || '';
+      if (!/noopener/.test(rel)) {
+        a.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+      }
+    });
+
+    // Add copy buttons to all code blocks
+    var codeBlocks = document.querySelectorAll('pre');
+    codeBlocks.forEach(function(pre) {
+      var button = document.createElement('button');
+      button.className = 'copy-button';
+      button.textContent = 'Copy';
+      button.addEventListener('click', function() {
+        var code = pre.querySelector('code') || pre;
+        var text = code.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+          button.textContent = 'Copied!';
+          button.classList.add('copied');
+          setTimeout(function() {
+            button.textContent = 'Copy';
+            button.classList.remove('copied');
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Failed to copy:', err);
+        });
+      });
+      pre.appendChild(button);
+    });
+  } catch (e) { /* no-op */ }
+})();
+</script>
+
+</body>
+</html>

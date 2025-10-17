@@ -1,12 +1,14 @@
 ---
 title: "Scraping with Playwright and AI"
 links:
-  - name: "National Azabu"
+  - name: "National Azabu vegetables"
     url: "https://www.national-azabu.net/products/list?category_id=52"
-  - name: "SUUMO"
+  - name: "SUUMO rental apartments in Chiyoda"
     url: "https://suumo.jp/chintai/tokyo/sc_chiyoda/mansion/"
-  - name: "Mercari"
+  - name: "Mercari books"
     url: "https://jp.mercari.com/search?category_id=72"  
+  - name: "Tabelog"
+    url: "https://tabelog.com/tokyo/A1310/A131002/R2080/rstLst/?SrtT=rt&Srt=D&sort_mode=1"
 ---
 
 [Playwright](https://playwright.dev/python/) is a great library for scraping data in Python.
@@ -45,7 +47,9 @@ Since I will be doing this in a notebook on Colab, I need you to provide the cod
 
 I am easily intimidated by lots of questions of technical issues. Please try to be patient and simple with me. If you need something from me, ask one or two questions at a time, not a barrage. Examples are helpful.
 
-Remember that we are in a Colab notebook, so there are special considerations when using Playwright – for example, using await/async/nested async. You will need to install both playwright and the browser. Use Firefox instead of Chromium.
+Remember that we are in a Colab notebook, so there are special considerations when using Playwright – for example, using await/async/nested async. You will need to install both playwright and the browser. Use Firefox instead of Chromium. Use networkidle to ensure the page has fully loaded.
+
+Use Playwright for accessing and interacting with the page, but then push the loaded source into BeautifulSoup in the interests of processing time.
 
 Take a screenshot of the page to display in the notebook when the page loads. That is always fun!
 
