@@ -1277,7 +1277,11 @@ def process_markdown(markdown_path, output_dir, config, section_cfg=None):
             else:
                 full_content += f"- [{name}]({url})\n"
         full_content += "\n"
-    
+
+    # Add the main content - only add a default header if the content doesn't start with ##
+    if markdown_content and not markdown_content.strip().startswith('##'):
+        full_content += "## Walkthrough\n\n"
+
     full_content += markdown_content
 
     # Convert to HTML and save
