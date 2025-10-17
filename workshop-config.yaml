@@ -104,6 +104,8 @@ sections:
         url: "https://learn.microsoft.com/en-us/microsoft-edge/devtools/network/"
       - title: "Network Inspector for Google Chrome"
         url: "https://developer.chrome.com/docs/devtools/network"
+      - title: "Curlconverter to change cURL commands to Python code"
+        url: "https://curlconverter.com"
     draft: false
 
   # Day 4 - Thursday Part 1
