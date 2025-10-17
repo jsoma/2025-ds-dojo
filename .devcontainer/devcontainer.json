@@ -1,0 +1,35 @@
+{
+  "name": "Nikkei Python Workshop 2025",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "yzhang.markdown-all-in-one"
+      ],
+
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "jupyter.askForKernelRestart": false,
+        "files.autoSave": "afterDelay",
+        "terminal.integrated.fontSize": 14
+      }
+    }
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/git-lfs:1": {}
+  },
+
+  "postCreateCommand": "pip install -r requirements.txt && echo '🎉 Workshop ready! Open any .ipynb file to start.'",
+
+  "forwardPorts": [8888],
+
+  "remoteUser": "vscode"
+}
